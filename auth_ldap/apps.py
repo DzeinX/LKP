@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class LkpLogicConfig(AppConfig):
+class AuthConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'lkp_logic'
+    name = 'auth_ldap'
