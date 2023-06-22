@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
+from django.contrib.messages import constants as messages
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,11 +22,13 @@ is_config = os.path.exists(str(BASE_DIR) + "/Config.py")
 if is_config:
     # Настройки Django из Config.py
     from Config import DjangoSettings
-
-    # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = DjangoSettings.SECRET_KEY
 else:
     raise Exception('Конфигурация не заданна... Положите файл Config.py с классом в корень проекта (рядом с manage.py)')
+
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/auth/login'
 
 
 # Quick-start development settings - unsuitable for production
@@ -138,3 +141,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'p-2 list-group-item list-group-item-secondary text-center',
+    messages.INFO: 'p-2 list-group-item list-group-item-info text-center',
+    messages.SUCCESS: 'p-2 list-group-item list-group-item-success text-center',
+    messages.WARNING: 'p-2 list-group-item list-group-item-warning text-center',
+    messages.ERROR: 'p-2 list-group-item list-group-item-danger text-center',
+}

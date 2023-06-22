@@ -1,0 +1,32 @@
+{% extends 'Base_template.html' %}
+
+{% block title %}
+    Вход
+{% endblock %}
+
+{% block body %}
+    <div class="container h-100 d-flex align-items-center justify-content-center">
+        <form method="POST" action="{% url 'login_page' %}" class="w-50 border border-primary rounded p-5">
+            {% csrf_token %}
+            <div class="mb-1 d-flex">
+                <h1 class="mx-auto">Вход в систему</h1>
+            </div>
+            {% if messages %}
+                <ul class="messages list-group">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <div class="mb-3">
+                <label for="Login" class="form-label">Логин</label>
+                <input type="text" class="form-control" id="Login" name="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="InputPassword" class="form-label">Пароль</label>
+                <input type="password" class="form-control" id="InputPassword" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+{% endblock %}
