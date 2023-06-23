@@ -1,0 +1,36 @@
+{% extends 'layouts.app' %}
+
+{% block 'content' %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Панель управления</div>
+
+                <div class="card-body">
+                    {% if session('status')%}
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                        </div>
+                    {% endif% }
+
+                    {% if True %}      <!-- (is_null(Auth::user()->position_id))  -->
+                        <div class="alert alert-warning">
+                            Перед перед заполнением показателей эффективности необходимо
+                            <a href="#">указать должность</a>.  <!-- {{ route('users.edit', ['user' => Auth::user()->id]) }} -->
+                        </div>
+                    {% endif% }
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <a href="#" class="btn btn-primary d-block">Показатели эффективности</a> <!-- {{ route('forms.index') }} -->
+                        </div>
+                        <div class="col-lg-6">
+                            <a href="{{ route('files.index') }}" class="btn btn-primary d-block">Портфолио</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

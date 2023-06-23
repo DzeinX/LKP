@@ -1,0 +1,153 @@
+{% extends layouts.app %}
+
+{% block content %}
+    <div class="container">
+        <h1>Профиль</h1>
+        {% if user.position.id|length !=0 %}
+            <div class="alert alert-warning">
+                Необходимо указать должность.
+            </div>
+        {% endif %}
+        <form method="post" action="{{ route('users.update', ['user' => $user->id]) }}">
+            {% csrf_token %}
+            @method('PUT')
+
+            <div class="form-group row">
+                <label for="position_id" class="col-md-4 col-form-label text-md-right">Должность</label>
+
+                <div class="col-md-6">
+                    <select id="position_id" class="form-control @error('position_id') is-invalid @enderror" name="position_id" required autofocus>
+                        <option  {% if user.position_id = null) selected {% endif %} value>Укажите должность</option>
+                        {% for position in positions %}
+                            <option {% if user.position_id = position.id %} selected {% endif %} value="{{ position.id }}">{{ position.name }}</option>
+                        {% endfor %}
+                    </select>
+                    @error('position_id')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="departament_id" class="col-md-4 col-form-label text-md-right">Подразделение</label>
+
+                <div class="col-md-6">
+                    <select id="departament_id" class="form-control @error('departament_id') is-invalid @enderror" name="departament_id" required autofocus>
+                        <option {% if user.departament_id = null %} selected {% endif $} value>Укажите подразделение</option>
+                        @foreach($departaments as $department)
+                            <option {% if user departament_id = departmen.id) selected {% endif %} data-level="{{ department.level }}" value="{{ department.id }}">{{ department.name }}</option>
+                        {% endfor %}
+                    </select>
+                    @error('departament_id')
+                    <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="orcid" class="col-md-4 col-form-label text-md-right">ORCID</label>
+                <div class="col-md-6">
+                    <input id="orcid" class="form-control @error('orcid') is-invalid @enderror" name="orcid" value="{{ $user->orcid }}">
+                    @error('orcid')
+                    <span class="invalid-feedback" role="alert">
+                            <strong>{{ message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="wosrid" class="col-md-4 col-form-label text-md-right">WOS Researcher ID</label>
+                <div class="col-md-6">
+                    <input id="wosrid" class="form-control @error('wosrid') is-invalid @enderror" name="wosrid" value="{{ $user->wosrid }}">
+                    @error('wosrid')
+                    <span class="invalid-feedback" role="alert">
+                            <strong>{{ message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="said" class="col-md-4 col-form-label text-md-right">Scopus Author ID</label>
+                <div class="col-md-6">
+                    <input id="said" class="form-control @error('said') is-invalid @enderror" name="said" value="{{ $user->said }}">
+                    @error('said')
+                    <span class="invalid-feedback" role="alert">
+                            <strong>{{ message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="spin" class="col-md-4 col-form-label text-md-right">SPIN</label>
+                <div class="col-md-6">
+                    <input id="spin" class="form-control @error('spin') is-invalid @enderror" name="spin" value="{{ $user->spin }}">
+                    @error('spin')
+                    <span class="invalid-feedback" role="alert">
+                            <strong>{{ message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="form-group row mb-0">
+                <div class="col-md-8 offset-md-4">
+                    <button type="submit" class="btn btn-primary">
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        (() => {
+            const positionSelect = document.getElementById('position_id');
+            const departmentSelect = document.getElementById('departament_id');
+            // если директор, показывать институты, иначе кафедры
+            function onPositionChange() {
+                const selectedPosition = positionSelect.options[positionSelect.selectedIndex].value;
+                // для каждой option
+                for (let i = 0; i < departmentSelect.options.length; i++) {
+                    let option = departmentSelect.options[i];
+                    // если должность не выбрана
+                    if (selectedPosition === '') {
+                        // скрыть все кроме дефолта
+                        if (option.dataset.level !== undefined) {
+                            option.style.display = 'none';
+                            option.selected = false;
+                        }
+                        // если должность - директор
+                    } else if (selectedPosition === '1') {
+                        // показать дефолт и институты
+                        if (option.dataset.level === '1' || option.dataset.level === undefined) {
+                            option.style.display = '';
+                        } else {
+                            option.style.display = 'none';
+                            option.selected = false;
+                        }
+                        // если должность любая кроме директора
+                    } else {
+                        // показать дефолт и кафедры
+                        if (option.dataset.level === '2' || option.dataset.level === undefined) {
+                            option.style.display = '';
+                        } else {
+                            option.style.display = 'none';
+                            option.selected = false;
+                        }
+                    }
+                }
+            }
+            positionSelect.addEventListener('change', onPositionChange);
+            onPositionChange();
+        })()
+    </script>
+{% endblock %}

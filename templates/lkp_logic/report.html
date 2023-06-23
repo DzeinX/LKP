@@ -1,0 +1,29 @@
+{% extends 'voyager::master %}
+
+{% block 'page_title', 'Отчет по категории'%}
+
+{% block 'page_header' %}
+    <h1 class="page-title">
+        <i class="icon voyager-categories"></i>
+        Отчет по категориям
+    </h1>
+{% endblock 'page_header' %}
+
+{% block 'content' %}
+    <div class="page-content container-fluid">
+        <div class="panel panel-bordered">
+            <div class="panel-body">
+                <p>{{ form.name }}</p>
+                <ul>
+                {% for category in categories %}
+                    <li>
+                        <a href="{{ route('forms.reportCategory', ['form' => $form, 'category' => $category]) }}">
+                            {{ category.name }}
+                        </a>
+                    </li>
+                {%endfor%}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

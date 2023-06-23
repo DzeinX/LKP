@@ -1,0 +1,32 @@
+{%extends 'layouts.app' %}
+
+{% block 'content' %}
+    <div class="container">
+        <h1>Показатели эффективности</h1>
+        {% if forms isNotEmpty() %}
+        <div class="row">
+            {% for form in forms %}
+                <div class="col-lg-4">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ form.name }}</h5>
+                            @php                                                                                                               <!-- ?????? -->
+                                $formPositionsId = Arr::pluck($form->positions->toArray(), 'id');
+                                $usersForm = array_search(Auth::user()->position_id, $formPositionsId) !== false;    
+                            @endphp
+                            {% if usersForm <!-- если должность пользователя и формы совпадает-->  %}                                     
+                                <a href="{{ route('forms.edit', ['form' => $form->id]) }}" class="card-link">Заполнить</a> 
+                            {% endif %}
+                            {% if Auth.user.can ('edit', someValue)%} <!-- если пользователь может редактировать значения -->
+                                <a href="{{ route('fields.index', ['form' => $form->id]) }}" class="card-link">Проверить</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% else %}
+            <p><i>Анкеты за активный отчетный период не найдены.</i></p>
+        {% endif %}
+    </div>
+{% endblock  %}

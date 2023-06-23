@@ -1,0 +1,138 @@
+{% extends layouts.app %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ form.name }}</h1>
+        {% if errors.any %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for error in errors.all %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <form id="form-edit-form" method="post">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="min-width: 400px">
+                            Критерий
+                        </th>
+                        <th style="min-width: 400px">
+                            Значение
+                        </th>
+                        {% for category in categories %}
+                            {% if(!category.willBeActive) %}
+                                <th {% if form.commentable %} colspan="2" {% endif %}>
+                                    {{ category.name }}
+                                </th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                        {% csrf_token%}
+                
+                        {% for field in fields %}
+                            <tr>
+                                <td>{{ field.name }}</td>
+                                <td>{{ field.description }}</td>
+                                {% for category in categories %}
+                                    @php                                                                                                                    <!--???-->
+                                        $valueExists = false;
+                                        $fieldIndex = $field->id . $category->id;
+                                    @endphp
+                                    <!-- если категории не предстоит быть активной, т.e. если она или была активна или активна сейчас -->
+                                    {% if category.willBeActive %}
+                                        <!-- если критерий содержит значения -->
+                                        {% if field.values.count > 0 %}
+                                            {% for value in field.values %}
+                                                {% if value.category_id == category.id %}
+                                                    <!-- Если такое значение существует -->
+                                                    @php                                                                                                <!--???-->
+                                                    valueExists = true;
+                                                    @endphp
+                                                    <td>
+                                                        {% if category.wasActive %}
+                                                            <input type="hidden" name="value[{{ fieldIndex }}][id]" value="{{ value.id}}">
+                                                            <input type="hidden" name="value[{{ fieldIndex }}][field_id]" value="{{ value.field_id }}">
+                                                            <input type="hidden" name="value[{{ fieldIndex }}][category_id]" value="{{ category.id }}">
+                                                        {% endif %}
+                                                        <input {% if category.wasActive %} name="value[{{ fieldIndex }}][value]" {% endif %} class="form-control w-auto"
+                                                            value="{{ value.value }}" placeholder="Значение"  {% if category.wasActive %} readonly {% endif %}
+                                                            data-toggle="tooltip" data-placement="left" title="{{ field.name }}">
+                                                    </td>
+                                                    {%if form.commentable %}
+                                                        <td>
+                                                            <textarea rows="4" {% if category.wasActive %}  name="value[{{ fieldIndex }}][comment]" {% endif %} class="form-control w-auto"
+                                                                      placeholder="Комментарий" {% if category.wasActive %} readonly {%endif}% >{{ value.comment }}</textarea>
+                                                        </td>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                        <!-- /если критерий содержит значения -->
+                                        <!-- если критерий не содержит значения -->
+                                        {% if valueExists %}
+                                            <!-- если такого значения не существует -->
+                                            <td>
+                                                <input type="hidden" name="value[{{ fieldIndex }}][field_id]" value="{{ field.id }}">
+                                                <input type="hidden" name="value[{{ fieldIndex }}][category_id]" value="{{ category.id }}">
+                                                <input name="value[{{ fieldIndex }}][value]" class="form-control w-auto"
+                                                       placeholder="Значение"  {% if category.wasActive%} readonly {% endif %}
+                                                       data-toggle="tooltip" data-placement="left" title="{{ field.name }}">
+                                            </td>
+                                            {% if form.commentable %}
+                                                <td>
+                                                    <textarea rows="4" name="value[{{ fieldIndex }}][comment]" class="form-control w-auto"
+                                                              placeholder="Комментарий" {% if category.wasActive%} readonly {% endif %}></textarea>
+                                                </td>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                    <!--  /если категории не предстоит быть активной -->
+                                {% endfor %}
+                                <!--  /для каждой категории -->
+                            </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">
+                    Сохранить
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            (document).ready(function(){
+                ('.table-responsive').doubleScroll();
+            });
+
+            /**
+             * При нажатии Enter вместо отправки данных срабатывает Tab
+             * @link https://www.geeksforgeeks.org/how-to-disable-form-submit-on-enter-button-using-jquery/
+             */
+            const inputs = ('#form-edit-form').find(":input:visible");
+            ('input').on("keypress", function (event) {
+                const keyPressed = event.keyCode || event.which;
+                if (keyPressed === 13) {
+                    const index = inputs.index(this);
+                    inputs.eq(index + 1).focus().select();
+                    return false;
+                }
+            });
+            // https://getbootstrap.com/docs/4.0/components/tooltips/
+            (function () {
+                ('[data-toggle="tooltip"]').tooltip()
+            })
+        });
+    </script>
+{% endblock %}
