@@ -3,3 +3,4 @@ Config.py
 db.sqlite3
 .idea
 __pycache__
+djangoVenv
