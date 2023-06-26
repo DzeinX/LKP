@@ -12,14 +12,14 @@
                         <div class="alert alert-success" role="alert">
                             {{ session('status') }}
                         </div>
-                    {% endif% }
+                    {% endif %}
 
                     {% if True %}      <!-- (is_null(Auth::user()->position_id))  -->
                         <div class="alert alert-warning">
                             Перед перед заполнением показателей эффективности необходимо
                             <a href="#">указать должность</a>.  <!-- {{ route('users.edit', ['user' => Auth::user()->id]) }} -->
                         </div>
-                    {% endif% }
+                    {% endif %}
                     <div class="row">
                         <div class="col-lg-6">
                             <a href="#" class="btn btn-primary d-block">Показатели эффективности</a> <!-- {{ route('forms.index') }} -->

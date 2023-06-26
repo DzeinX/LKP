@@ -27,8 +27,9 @@ else:
     raise Exception('Конфигурация не заданна... Положите файл Config.py с классом в корень проекта (рядом с manage.py)')
 
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/auth/login'
+# LOGIN_URL = '/auth/login'
+# LOGIN_REDIRECT_URL = '/'
+# LOGOUT_REDIRECT_URL = '/auth/login'
 
 
 # Quick-start development settings - unsuitable for production
@@ -69,8 +70,7 @@ ROOT_URLCONF = 'LKP.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -142,6 +142,8 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Use new custom user model
+AUTH_USER_MODEL = 'auth_ldap.User'
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'p-2 list-group-item list-group-item-secondary text-center',

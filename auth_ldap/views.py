@@ -1,12 +1,10 @@
-import hashlib
-
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import render, redirect
 
-import Config
+from Config import LDAPSettings
 from auth_ldap.LDAP.LDAPBackend import backend_1
 from auth_ldap.LDAP.LDAPBackend import backend_2
 from django.contrib.auth import get_user_model
@@ -26,7 +24,7 @@ def login_page(request):
 
         user_login = None
 
-        if Config.LDAPSettings.is_LDAP:
+        if LDAPSettings.is_auth_with_LDAP:
             user_login1 = backend_1.authenticate(username, password)
             user_login2 = backend_2.authenticate(username, password)
 
@@ -41,13 +39,11 @@ def login_page(request):
                 user_login = user_login1
         else:
             # TODO: Убрать при загрузке на продакшн
-            user = get_user_model()
-            user_login = user.objects.filter(username=username).first()
+            User = get_user_model()
+            user_login = User.objects.filter(username=username).first()
             if user_login is None:
-                user_login = user(username=username,
-                                  is_superuser=False,
+                user_login = User(username=username,
                                   password=password,
-                                  is_staff=True,
                                   is_active=True)
                 user_login.save()
             if user_login.password != password:
@@ -62,7 +58,7 @@ def login_page(request):
     return redirect('login_page')
 
 
-@login_required
+@login_required(login_url='login_page')
 def logout_page(request):
     logout(request)
     return redirect('login_page')

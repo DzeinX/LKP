@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from auth_ldap.models import User
 
 
 # Отчетный период
@@ -26,15 +27,6 @@ class Inspector(models.Model):
 
     def __str__(self):
         return f'{self.name}'
-
-
-# Пользователь
-class User(models.Model):
-    post_id = models.ManyToManyField(Post)
-    inspector_id = models.ManyToManyField(Inspector)
-
-    def __str__(self):
-        return f'{self.id}'
 
 
 # Категория
