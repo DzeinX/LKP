@@ -1,6 +1,6 @@
-{%extends 'layouts.app' %}
+{%extends "app.html" %}
 
-{% block 'content' %}
+{% block content %}
     <div class="container">
         <h1>Показатели эффективности</h1>
         {% if forms isNotEmpty() %}
@@ -10,15 +10,15 @@
                     <div class="card mb-4">
                         <div class="card-body">
                             <h5 class="card-title">{{ form.name }}</h5>
-                            @php                                                                                                               <!-- ?????? -->
+                        <!--    @php                                                                                                               
                                 $formPositionsId = Arr::pluck($form->positions->toArray(), 'id');
                                 $usersForm = array_search(Auth::user()->position_id, $formPositionsId) !== false;    
-                            @endphp
+                            @endphp -->
                             {% if usersForm <!-- если должность пользователя и формы совпадает-->  %}                                     
-                                <a href="{{ route('forms.edit', ['form' => $form->id]) }}" class="card-link">Заполнить</a> 
+                                <a href="#" class="card-link">Заполнить</a> <!-- {{ route('forms.edit', ['form' => $form->id]) }} -->
                             {% endif %}
                             {% if Auth.user.can ('edit', someValue)%} <!-- если пользователь может редактировать значения -->
-                                <a href="{{ route('fields.index', ['form' => $form->id]) }}" class="card-link">Проверить</a>
+                                <a href="#" class="card-link">Проверить</a> <!-- {{ route('fields.index', ['form' => $form->id]) }} -->
                             {% endif %}
                         </div>
                     </div>

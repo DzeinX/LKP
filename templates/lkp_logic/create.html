@@ -1,6 +1,6 @@
-{% extends 'layouts.app' %}
+{% extends  %}
 
-{% block 'content' %}
+{% block content %}
     <div class="container">
         <h1>Файл</h1>
         {% if errors.any %}
@@ -18,11 +18,13 @@
                 <label for="name" class="col-md-4 col-form-label text-md-right">Название</label>
                 <div class="col-md-6">
                     <input id="name" class="form-control @error('name') is-invalid @enderror" name="name" required autofocus>
-                    @error('name')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ message }}</strong>
-                    </span>
-                    @enderror
+                    {% if messages %}  <!-- ('name') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
+                        </span>
+                        {% endif %}
                 </div>
             </div>
 
@@ -30,11 +32,13 @@
                 <label for="description" class="col-md-4 col-form-label text-md-right">Описание</label>
                 <div class="col-md-6">
                     <input id="description" class="form-control @error('description') is-invalid @enderror" name="description" required>
-                    @error('description')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ message }}</strong>
-                    </span>
-                    @enderror
+                    {% if messages %}  <!-- ('description') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
+                        </span>
+                    {% endif %}
                 </div>
             </div>
 
@@ -48,11 +52,13 @@
                             <option value="{{ category.id }}">{{ category.name }}</option>
                         {% endfor %}
                     </select>
-                    @error('file_category_id')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ message }}</strong>
-                    </span>
-                    @enderror
+                    {% if messages %} <!-- @error('file_category_id') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
+                        </span>
+                    {% endif %}
                 </div>
             </div>
 
@@ -61,11 +67,13 @@
                 <label for="file" class="col-md-4 col-form-label text-md-right">Файл</label>
                 <div class="col-md-6">
                     <input id="file" type="file" class="@error('file') is-invalid @enderror" name="file" required>
-                    @error('file')
+                    {% if messages %} <!-- @error('file') -->
                     <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
+                        {% for message in messages %} 
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
                     </span>
-                    @enderror
+                    {% endif %}
                 </div>
             </div>
 

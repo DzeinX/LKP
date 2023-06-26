@@ -1,4 +1,4 @@
-{% extends layouts.app %}
+{% extends "app.html" %}
 
 {% block content %}
     <div class="container">
@@ -17,7 +17,7 @@
 
                 <div class="col-md-6">
                     <select id="position_id" class="form-control @error('position_id') is-invalid @enderror" name="position_id" required autofocus>
-                        <option  {% if user.position_id = null) selected {% endif %} value>Укажите должность</option>
+                        <option  {% if user.position_id = null) %} selected {% endif %} value>Укажите должность</option>
                         {% for position in positions %}
                             <option {% if user.position_id = position.id %} selected {% endif %} value="{{ position.id }}">{{ position.name }}</option>
                         {% endfor %}
@@ -36,15 +36,17 @@
                 <div class="col-md-6">
                     <select id="departament_id" class="form-control @error('departament_id') is-invalid @enderror" name="departament_id" required autofocus>
                         <option {% if user.departament_id = null %} selected {% endif $} value>Укажите подразделение</option>
-                        @foreach($departaments as $department)
-                            <option {% if user departament_id = departmen.id) selected {% endif %} data-level="{{ department.level }}" value="{{ department.id }}">{{ department.name }}</option>
+                        {% for department in departaments %}
+                            <option {% if user departament_id = departmen.id) %} selected {% endif %} data-level="{{ department.level }}" value="{{ department.id }}">{{ department.name }}</option>
                         {% endfor %}
                     </select>
-                    @error('departament_id')
-                    <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
+                    {% if messages %} <!--('departament_id') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
                         </span>
-                    @enderror
+                    {% endif %}
                 </div>
             </div>
 
@@ -52,11 +54,13 @@
                 <label for="orcid" class="col-md-4 col-form-label text-md-right">ORCID</label>
                 <div class="col-md-6">
                     <input id="orcid" class="form-control @error('orcid') is-invalid @enderror" name="orcid" value="{{ $user->orcid }}">
-                    @error('orcid')
-                    <span class="invalid-feedback" role="alert">
-                            <strong>{{ message }}</strong>
+                    {% if messages %} <!--@error('orcid') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
                         </span>
-                    @enderror
+                    {% endif %}
                 </div>
             </div>
 
@@ -64,11 +68,13 @@
                 <label for="wosrid" class="col-md-4 col-form-label text-md-right">WOS Researcher ID</label>
                 <div class="col-md-6">
                     <input id="wosrid" class="form-control @error('wosrid') is-invalid @enderror" name="wosrid" value="{{ $user->wosrid }}">
-                    @error('wosrid')
-                    <span class="invalid-feedback" role="alert">
-                            <strong>{{ message }}</strong>
+                    {% if messages %} <!--@error('wosrid') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
                         </span>
-                    @enderror
+                    {% endif %}
                 </div>
             </div>
 
@@ -76,11 +82,13 @@
                 <label for="said" class="col-md-4 col-form-label text-md-right">Scopus Author ID</label>
                 <div class="col-md-6">
                     <input id="said" class="form-control @error('said') is-invalid @enderror" name="said" value="{{ $user->said }}">
-                    @error('said')
-                    <span class="invalid-feedback" role="alert">
-                            <strong>{{ message }}</strong>
+                    {% if messages %} <!--@error('said') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
                         </span>
-                    @enderror
+                    {% endif %}
                 </div>
             </div>
 
@@ -88,11 +96,13 @@
                 <label for="spin" class="col-md-4 col-form-label text-md-right">SPIN</label>
                 <div class="col-md-6">
                     <input id="spin" class="form-control @error('spin') is-invalid @enderror" name="spin" value="{{ $user->spin }}">
-                    @error('spin')
-                    <span class="invalid-feedback" role="alert">
-                            <strong>{{ message }}</strong>
+                    {% if messages %}<!--@error('spin') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
                         </span>
-                    @enderror
+                    {% endif %}
                 </div>
             </div>
 

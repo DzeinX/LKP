@@ -1,4 +1,4 @@
-{% extends layouts.app %}
+{% extends "app.html" %}
 
 {% block content %}
     <div class="container">
@@ -40,10 +40,10 @@
                                 <td>{{ field.name }}</td>
                                 <td>{{ field.description }}</td>
                                 {% for category in categories %}
-                                    @php                                                                                                                    <!--???-->
+                                    <!--@php                                                                                                                   
                                         $valueExists = false;
                                         $fieldIndex = $field->id . $category->id;
-                                    @endphp
+                                    @endphp -->
                                     <!-- если категории не предстоит быть активной, т.e. если она или была активна или активна сейчас -->
                                     {% if category.willBeActive %}
                                         <!-- если критерий содержит значения -->
@@ -51,9 +51,9 @@
                                             {% for value in field.values %}
                                                 {% if value.category_id == category.id %}
                                                     <!-- Если такое значение существует -->
-                                                    @php                                                                                                <!--???-->
+                                                <!--@php                                                                                               
                                                     valueExists = true;
-                                                    @endphp
+                                                    @endphp -->
                                                     <td>
                                                         {% if category.wasActive %}
                                                             <input type="hidden" name="value[{{ fieldIndex }}][id]" value="{{ value.id}}">
