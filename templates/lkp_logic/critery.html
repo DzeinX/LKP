@@ -1,10 +1,14 @@
-{% extends "app.html" %}
+{% extends "Base_template.html" %}
 
-{% block content %}
+{% block title %}
+
+{% endblock %}
+
+{% block body %}
     <div class="container">
         <h1>Критерии</h1>
         <p>Критерии, доступные для проверки вам.</p>
-        {% if fields|length !=0 %}
+        {% if fields|length != None %}
             <div class="dropdown show mb-3">
                 <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
                     Отчет (.xlsx)
@@ -23,7 +27,7 @@
             </div>
             <div class="list-group">
                 {% for field in fields %}
-                <a href="#">> class="list-group-item list-group-item-action">          <!--{{ route('fields.show', ['field' => $field->id]) }}-->
+                <a href="#">> class="list-group-item list-group-item-action">
                     {{ field.name }}
                 </a>
                 {% endfor %}

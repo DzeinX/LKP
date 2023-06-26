@@ -1,6 +1,10 @@
-{% extends "app.html" %}
+{% extends "Base_template.html" %}
 
-{% block content %}
+{% block title %}
+
+{% endblock %}
+
+{% block body %}
     <div class="container">
         <h1>{{ form.name }}</h1>
         {% if errors.any %}
@@ -24,7 +28,7 @@
                             Значение
                         </th>
                         {% for category in categories %}
-                            {% if(!category.willBeActive) %}
+                            {% if not  category.willBeActive %}
                                 <th {% if form.commentable %} colspan="2" {% endif %}>
                                     {{ category.name }}
                                 </th>
@@ -67,7 +71,7 @@
                                                     {%if form.commentable %}
                                                         <td>
                                                             <textarea rows="4" {% if category.wasActive %}  name="value[{{ fieldIndex }}][comment]" {% endif %} class="form-control w-auto"
-                                                                      placeholder="Комментарий" {% if category.wasActive %} readonly {%endif}% >{{ value.comment }}</textarea>
+                                                                      placeholder="Комментарий" {% if category.wasActive %} readonly {%endif%} >{{ value.comment }}</textarea>
                                                         </td>
                                                     {% endif %}
                                                 {% endif %}
