@@ -21,6 +21,7 @@ def login_page(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
+        is_remember = request.POST.getlist('remember')
 
         user_login = None
 
@@ -49,6 +50,11 @@ def login_page(request):
             if user_login.password != password:
                 messages.error(request, 'Неверный логин или пароль')
                 return redirect('login_page')
+
+        if is_remember:
+            request.session.set_expiry(0)
+        else:
+            request.session.set_expiry(None)
 
         login(request, user_login)
         messages.success(request, 'Добро пожаловать!')
