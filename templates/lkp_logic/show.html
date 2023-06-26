@@ -1,6 +1,10 @@
-{% extends layouts.app %}
+{% extends 'Base_template.html' %}
 
-{% block content %}
+{% block title %}
+    Критерий
+{% endblock %}
+
+{% block body %}
     <div class="container">
         <h1>Критерий: {{ field.name }}</h1>
         <p>Показатели всех пользователей, по выбранному критерию.</p>
@@ -9,50 +13,47 @@
             <div class="col-4">
                 <h4>ФИО</h4>
             </div>
-
-           
-
             <div class="col">
                 <div class="row">
-                    
-            <div class="col-5">
-                            <h4>Категории</h4>
-                        </div>
-                  
+
+                    <div class="col-5">
+                        <h4>Категории</h4>
+                    </div>
+
                     <div class="col">
                         <h4>Значение</h4>
                     </div>
                 </div>
             </div>
         </div>
-        {% if users|length !=0 %}
-            {% for user in users %}
-                {% if user.values|length !=0 %}
+        {% if users|length != 0 %}
+            {% for user_lkp in users %}
+                {% if user_lkp.values|length != 0 %}
                     <div class="row mb-3">
                         <div class="col-4">
-                            <a href="#" target="_blank" title="Открыть портфолио"> <!--{{ route('files.index', ['user_id' => user.id]) }} -->
-                                {{ user.name }}
+                            <a href="#" target="_blank" title="Открыть портфолио">
+                                {{ user_lkp.name }}
                             </a>
                         </div>
                         <div class="col">
-                        {% for value in user.values %}
-                            <div class="row mb-1">
-                               
+                            {% for value in user_lkp.values %}
+                                <div class="row mb-1">
+
                                     <div class="col-5">
                                         None
                                     </div>
-                                
-                                <div class="col">
-                                    <div class="inspector-value-form"
-                                         data-userid="{{ user.id }}"
-                                         data-valueid="{{ value.id }}"
-                                         data-value="{{ value.value }}"
-                                         data-comment="{{ value.comment }}"
-                                         data-commentable="{{ field.form.commentable }}"
-                                    ></div>
+
+                                    <div class="col">
+                                        <div class="inspector-value-form"
+                                             data-userid="{{ user_lkp.id }}"
+                                             data-valueid="{{ value.id }}"
+                                             data-value="{{ value.value }}"
+                                             data-comment="{{ value.comment }}"
+                                             data-commentable="{{ field.form.commentable }}"
+                                        ></div>
+                                    </div>
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
                         </div>
                     </div>
                 {% endif %}

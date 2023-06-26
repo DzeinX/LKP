@@ -4,7 +4,7 @@
     <div class="container">
         <h1>Критерии</h1>
         <p>Критерии, доступные для проверки вам.</p>
-        {% if fields| length !=0 %}
+        {% if fields|length != 0 %}
             <div class="dropdown show mb-3">
                 <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
                     Отчет (.xlsx)
@@ -14,7 +14,7 @@
                         <a href="#"
                            class="dropdown-item">
                             {{ category.name }}
-                        </a>    <!--{{ route('forms.reportCategoryInspector', [
+                        </a>    <!--{{ route ('forms.reportCategoryInspector', [
                     'form' = form,
                     'category' = category,
                     'inspector' = \Illuminate\Support\Facades\Auth::user()->inspector_id]) }} -->
