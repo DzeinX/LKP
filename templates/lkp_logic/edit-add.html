@@ -1,17 +1,12 @@
-{% extends voyager::master %}
+{% extends 'Base_template' %}
 
-{% block ('page_title', __('voyager::generic.'.(isset($dataTypeContent->id) ? 'edit' : 'add')).' '.$dataType->getTranslatedAttribute('display_name_singular')) %}
+
 
 {% block css %}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 {% endblock %}
 
-{% block page_header %}
-    <h1 class="page-title">
-        <i class="{{ $dataType->icon }}"></i>
-        {{ __('voyager::generic.'.(isset($dataTypeContent->id) ? 'edit' : 'add')).' '.$dataType->getTranslatedAttribute('display_name_singular') }}
-    </h1>
-{% endblock %}
+
 
 {% block body %}
              <div class="row">
@@ -32,7 +27,7 @@
                         @endphp -->
                         <div class="panel-body">
                             <div class="form-group">
-                                <label for="name">{{ __('voyager::generic.name') }}</label>
+                                <label for="name"> <!--{{ __('voyager::generic.name') }} --></label>
                                 <input type="text" class="form-control" id="name" name="name" placeholder="{{ __('voyager::generic.name') }}"
                                        value="{{ old('name', dataTypeContent.name ?? '') }}">
                             </div>
@@ -61,10 +56,10 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="password">{{ __('voyager::generic.password') }}</label>
+                                <label for="password"><!-- {{ __('voyager::generic.password') }} --></label>
                                 {% if isset(dataTypeContent.password) %}
                                     <br>
-                                    <small>{{ __('voyager::profile.password_hint') }}</small>
+                                    <small><!--{{ __('voyager::profile.password_hint') }} --></small>
                                 {% endif %}
                                 <input type="password" class="form-control" id="password" name="password" value="" autocomplete="new-password">
                             </div>
@@ -98,10 +93,10 @@
                             <div class="form-group">
                                 <label for="locale">{{ __('voyager::generic.locale') }}</label>
                                 <select class="form-control select2" id="locale" name="locale">
-                                    {% for locale in Voyager::getLocales() %}
+                                    <!--{% for locale in Voyager::getLocales() %}
                                     <option value="{{ locale }}"
                                     {{ (locale = selected_locale ? 'selected' : '') }}>{{ locale }}</option>
-                                    {% endfor %}
+                                    {% endfor %} -->
                                 </select>
                             </div>
                         </div>
@@ -123,7 +118,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary pull-right save">
-                {{ __('voyager::generic.save') }}
+                <!--{{ __('voyager::generic.save') }} -->
             </button>
         </form>
 

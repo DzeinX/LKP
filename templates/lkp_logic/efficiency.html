@@ -1,9 +1,9 @@
-{%extends "app.html" %}
+{%extends 'Base_template.html' %}
 
-{% block content %}
+{% block body %}
     <div class="container">
         <h1>Показатели эффективности</h1>
-        {% if forms isNotEmpty() %}
+        {% if forms|length != 0 %}
         <div class="row">
             {% for form in forms %}
                 <div class="col-lg-4">
