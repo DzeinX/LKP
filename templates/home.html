@@ -1,36 +1,46 @@
-{% extends "app.html" %}
+{% extends 'Base_template.html' %}
 
-{% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Панель управления</div>
+{% block title %}
+    Домашняя страница
+{% endblock %}
 
-                <div class="card-body">
-                    {% if session('status')%}
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    {% endif% }
 
-                    {% if True %}      <!-- (is_null(Auth::user()->position_id))  -->
-                        <div class="alert alert-warning">
-                            Перед перед заполнением показателей эффективности необходимо
-                            <a href="#">указать должность</a>.  <!-- {{ route('users.edit', ['user' => Auth::user()->id]) }} -->
-                        </div>
-                    {% endif% }
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <a href="#" class="btn btn-primary d-block">Показатели эффективности</a> <!-- {{ route('forms.index') }} -->
-                        </div>
-                        <div class="col-lg-6">
-                            <a href="#" class="btn btn-primary d-block">Портфолио</a> <!-- {{ route('files.index') }} -->
+{% block body %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">Панель управления</div>
+
+
+
+                    <div class="card-body">
+                        {% if messages %}
+                            <ul class="messages list-group">
+                                {% for message in messages %}
+                                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        {% if user.position_at_work|length == 0 %}
+                            <div class="alert alert-warning">
+                                Перед заполнением показателей эффективности необходимо
+                                <a href="{% url "edit" %}">указать должность</a>.
+                            </div>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <a href="{% url "efficiency" %}" class="btn btn-primary d-block">Показатели эффективности</a>
+                            </div>
+                            <div class="col-lg-6">
+                                <a href="{% url "critery" %}" class="btn btn-primary d-block">Портфолио</a>
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
