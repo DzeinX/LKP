@@ -78,6 +78,7 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
+
         migrations.CreateModel(
             name="Inspector",
             fields=[

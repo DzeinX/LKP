@@ -1,6 +1,11 @@
-{% extends "app.html" %}
+{% extends "Base_template.html" %}
 
-{% block content %}
+
+{% block title %}
+    Отчет
+{% endblock %}
+
+{% block body %}
     <div class="container">
         <h1>Критерии</h1>
         <p>Критерии, доступные для проверки вам.</p>
@@ -25,7 +30,7 @@
             </div>
             <div class="list-group">
                 {% for field in fields %}
-                <a href="#">> class="list-group-item list-group-item-action">          <!--{{ route('fields.show', ['field' => $field->id]) }}-->
+                <a href="#">> class="list-group-item list-group-item-action">
                     {{ field.name }}
                 </a>
                 {% endfor %}

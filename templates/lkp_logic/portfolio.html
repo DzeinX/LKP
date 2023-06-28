@@ -1,8 +1,11 @@
+
 {% extends 'Base_template.html' %}
 
 {% block body %}
+
+
     <div class="container">
-        <h1>Портфолио : {{ $user->name }}</h1>
+        <h1>Портфолио : {{ user.name }}</h1>
         <p>
       <!--  {%for (attribute => label in ['orcid' => 'ORCID', 'wosrid' => 'WOS Researcher ID', 'said' => 'Scopus Author ID', 'spin' => 'SPIN']  )%}
         {{ label }}: {{ user.attribute ?? 'не указано' }}.<br />

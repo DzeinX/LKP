@@ -1,6 +1,12 @@
-{% extends  %}
 
-{% block content %}
+{% extends "Base_template.html"  %}
+
+{% block title %}
+    Создание
+{% endblock %}
+
+{% block body %}
+
     <div class="container">
         <h1>Файл</h1>
         {% if errors.any %}
@@ -12,12 +18,14 @@
                 </ul>
             </div>
         {% endif %}
-        <form method="post" action="{{ route('files.store') }}" enctype="multipart/form-data">
+        <form method="post"  enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group row">
                 <label for="name" class="col-md-4 col-form-label text-md-right">Название</label>
                 <div class="col-md-6">
-                    <input id="name" class="form-control @error('name') is-invalid @enderror" name="name" required autofocus>
+
+                    <input id="name" class="form-control " name="name" required autofocus>
+
                     {% if messages %}  <!-- ('name') -->
                         <span class="invalid-feedback" role="alert">
                             {% for message in messages %} 

@@ -1,16 +1,21 @@
-{% extends "app.html" %}
 
-{% block content %}
+{% extends "Base_template.html" %}
+
+
+{% block title %}
+    Категория 
+{% endblock %}
+
+{% block body %}
     <div class="container">
         <h1>{{ form.name }}</h1>
-        {% if errors.any %}
-            <div class="alert alert-danger">
-                <ul>
-                    {% for error in errors.all %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
+        {% if messages %}
+        <ul class="messages list-group">
+            {% for message in messages %}
+            <li
+            {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
         {% endif %}
         <form id="form-edit-form" method="post">
         <div class="table-responsive">
@@ -24,7 +29,7 @@
                             Значение
                         </th>
                         {% for category in categories %}
-                            {% if(!category.willBeActive) %}
+                            {% if not  category.willBeActive %}
                                 <th {% if form.commentable %} colspan="2" {% endif %}>
                                     {{ category.name }}
                                 </th>
@@ -40,20 +45,14 @@
                                 <td>{{ field.name }}</td>
                                 <td>{{ field.description }}</td>
                                 {% for category in categories %}
-                                    <!--@php                                                                                                                   
-                                        $valueExists = false;
-                                        $fieldIndex = $field->id . $category->id;
-                                    @endphp -->
-                                    <!-- если категории не предстоит быть активной, т.e. если она или была активна или активна сейчас -->
+
                                     {% if category.willBeActive %}
                                         <!-- если критерий содержит значения -->
                                         {% if field.values.count > 0 %}
                                             {% for value in field.values %}
                                                 {% if value.category_id == category.id %}
                                                     <!-- Если такое значение существует -->
-                                                <!--@php                                                                                               
-                                                    valueExists = true;
-                                                    @endphp -->
+
                                                     <td>
                                                         {% if category.wasActive %}
                                                             <input type="hidden" name="value[{{ fieldIndex }}][id]" value="{{ value.id}}">
@@ -67,7 +66,7 @@
                                                     {%if form.commentable %}
                                                         <td>
                                                             <textarea rows="4" {% if category.wasActive %}  name="value[{{ fieldIndex }}][comment]" {% endif %} class="form-control w-auto"
-                                                                      placeholder="Комментарий" {% if category.wasActive %} readonly {%endif}% >{{ value.comment }}</textarea>
+                                                                      placeholder="Комментарий" {% if category.wasActive %} readonly {%endif%} >{{ value.comment }}</textarea>
                                                         </td>
                                                     {% endif %}
                                                 {% endif %}
