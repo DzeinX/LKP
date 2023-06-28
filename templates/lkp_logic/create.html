@@ -1,7 +1,7 @@
 {% extends "Base_template.html"  %}
 
 {% block title %}
-
+    Создание
 {% endblock %}
 
 {% block body %}
@@ -21,7 +21,7 @@
             <div class="form-group row">
                 <label for="name" class="col-md-4 col-form-label text-md-right">Название</label>
                 <div class="col-md-6">
-                    <input id="name" class="form-control @error('name') is-invalid @enderror" name="name" required autofocus>
+                    <input id="name" class="form-control " name="name" required autofocus>
                     {% if messages %}  <!-- ('name') -->
                         <span class="invalid-feedback" role="alert">
                             {% for message in messages %} 
