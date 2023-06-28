@@ -13,7 +13,7 @@ class Positions(models.Model):
 class User(AbstractUser):
     username = models.CharField(max_length=40, unique=True)
     full_name = models.CharField(max_length=60)
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default=True)
 
     position_at_work = models.ForeignKey(Positions, on_delete=models.SET_NULL, null=True)
 
