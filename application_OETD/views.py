@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from .models import *
 
 
 @login_required(login_url='login_page')
@@ -81,6 +82,9 @@ def report(request):
 
 
 @login_required
-def show(request):
-    context = {}
+def show(request, _id):
+    field = Criteria.objects.get(pk=_id)
+    context = {
+        'field': field
+    }
     return render(request, 'lkp_logic/show.html', context)
