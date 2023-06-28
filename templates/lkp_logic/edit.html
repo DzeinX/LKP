@@ -1,32 +1,34 @@
-{% extends layouts.app %}
+{% extends "Base_template.html" %}
 
-{% block content %}
+{% block title %}
+
+{% endblock %}
+
+{% block body %}
     <div class="container">
         <h1>Профиль</h1>
-        {% if user.position.id|length !=0 %}
+        {% if user.position.id|length != None %}
             <div class="alert alert-warning">
                 Необходимо указать должность.
             </div>
         {% endif %}
-        <form method="post" action="{{ route('users.update', ['user' => $user->id]) }}">
+        <form method="post">
             {% csrf_token %}
-            @method('PUT')
 
             <div class="form-group row">
                 <label for="position_id" class="col-md-4 col-form-label text-md-right">Должность</label>
 
                 <div class="col-md-6">
                     <select id="position_id" class="form-control @error('position_id') is-invalid @enderror" name="position_id" required autofocus>
-                        <option  {% if user.position_id = null) selected {% endif %} value>Укажите должность</option>
+                        <option  {% if user.position_id == None  %} selected {% endif %} value>Укажите должность</option>
                         {% for position in positions %}
-                            <option {% if user.position_id = position.id %} selected {% endif %} value="{{ position.id }}">{{ position.name }}</option>
+                            <option {% if user.position_id == position.id %} selected {% endif %} value="{{ position.id }}">{{ position.name }}</option>
                         {% endfor %}
                     </select>
-                    @error('position_id')
                         <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
+                            <strong>{{ message }}</strong>
                         </span>
-                    @enderror
+                    
                 </div>
             </div>
 
@@ -35,64 +37,74 @@
 
                 <div class="col-md-6">
                     <select id="departament_id" class="form-control @error('departament_id') is-invalid @enderror" name="departament_id" required autofocus>
-                        <option {% if user.departament_id = null %} selected {% endif $} value>Укажите подразделение</option>
-                        @foreach($departaments as $department)
-                            <option {% if user departament_id = departmen.id) selected {% endif %} data-level="{{ department.level }}" value="{{ department.id }}">{{ department.name }}</option>
+                        <option {% if user.departament_id == None %} selected {% endif %} value>Укажите подразделение</option>
+                        {% for department in departaments %}
+                            <option {% if user.departament_id == departmen.id %} selected {% endif %} data-level="{{ department.level }}" value="{{ department.id }}">{{ department.name }}</option>
                         {% endfor %}
                     </select>
-                    @error('departament_id')
-                    <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
+                    {% if messages %} <!--('departament_id') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
                         </span>
-                    @enderror
+                    {% endif %}
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="orcid" class="col-md-4 col-form-label text-md-right">ORCID</label>
                 <div class="col-md-6">
-                    <input id="orcid" class="form-control @error('orcid') is-invalid @enderror" name="orcid" value="{{ $user->orcid }}">
-                    @error('orcid')
-                    <span class="invalid-feedback" role="alert">
-                            <strong>{{ message }}</strong>
+                    <input id="orcid" class="form-control " name="orcid" value="{{ user.orcid }}">
+                    {% if messages %} <!--@error('orcid') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
                         </span>
-                    @enderror
+                    {% endif %}
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="wosrid" class="col-md-4 col-form-label text-md-right">WOS Researcher ID</label>
                 <div class="col-md-6">
-                    <input id="wosrid" class="form-control @error('wosrid') is-invalid @enderror" name="wosrid" value="{{ $user->wosrid }}">
-                    @error('wosrid')
-                    <span class="invalid-feedback" role="alert">
-                            <strong>{{ message }}</strong>
+                    <input id="wosrid" class="form-control " name="wosrid" value="{{ user.wosrid }}">
+                    {% if messages %} <!--@error('wosrid') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
                         </span>
-                    @enderror
+                    {% endif %}
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="said" class="col-md-4 col-form-label text-md-right">Scopus Author ID</label>
                 <div class="col-md-6">
-                    <input id="said" class="form-control @error('said') is-invalid @enderror" name="said" value="{{ $user->said }}">
-                    @error('said')
-                    <span class="invalid-feedback" role="alert">
-                            <strong>{{ message }}</strong>
+                    <input id="said" class="form-control " name="said" value="{{ user.said }}">
+                    {% if messages %} <!--@error('said') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
                         </span>
-                    @enderror
+                    {% endif %}
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="spin" class="col-md-4 col-form-label text-md-right">SPIN</label>
                 <div class="col-md-6">
-                    <input id="spin" class="form-control @error('spin') is-invalid @enderror" name="spin" value="{{ $user->spin }}">
-                    @error('spin')
-                    <span class="invalid-feedback" role="alert">
-                            <strong>{{ message }}</strong>
+                    <input id="spin" class="form-control" name="spin" value="{{ user.spin }}">
+                    {% if messages %}<!--@error('spin') -->
+                        <span class="invalid-feedback" role="alert">
+                            {% for message in messages %} 
+                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
                         </span>
-                    @enderror
+                    {% endif %}
                 </div>
             </div>
 

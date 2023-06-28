@@ -1,6 +1,6 @@
-{% extends 'layouts.app' %}
+{% extends "app.html" %}
 
-{% block 'content' %}
+{% block content %}
     <div class="container">
         <h1>Портфолио : {{ $user->name }}</h1>
         <p>
@@ -27,7 +27,7 @@
 
         {%for category in fileCategories %}
             <h2>{{ category.name }}</h2>
-            @php $categoryFiles = $files->where('file_category_id', $category->id) @endphp
+            <!-- @php $categoryFiles = $files->where('file_category_id', $category->id) @endphp -->
 
             {% if categoryFiles.isEmpty %}
                 <ol>
