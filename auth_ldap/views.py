@@ -13,7 +13,7 @@ from django.contrib.auth import get_user_model
 def login_page(request):
     if request.method == "GET":
         if request.user.is_authenticated:
-            return redirect('main')
+            return redirect('home')
         else:
             context = {}
             return render(request, 'registration/login_page.html', context)
