@@ -99,6 +99,7 @@ class Forms(models.Model):
     # не знаю как называть
     commentable = models.IntegerField('commentable')
 
+
     def __str__(self):
         return f'{self.name}'
 

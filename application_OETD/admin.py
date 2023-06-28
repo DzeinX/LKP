@@ -21,3 +21,4 @@ admin.site.register(Translations)
 admin.site.register(Menus)
 admin.site.register(UserRoles)
 admin.site.register(Values)
+
