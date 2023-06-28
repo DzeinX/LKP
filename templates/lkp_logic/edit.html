@@ -19,8 +19,8 @@
                 <label for="position_id" class="col-md-4 col-form-label text-md-right">Должность</label>
 
                 <div class="col-md-6">
-                    <select id="position_id" class="form-control @error('position_id') is-invalid @enderror" name="position_id" required autofocus>
-                        <option  {% if user.position_id == None  %} selected {% endif %} value>Укажите должность</option>
+                    <select id="position_id" class="form-control " name="position_id" required autofocus>
+                        <option  {% if user.position_id != None  %} selected {% endif %} value>Укажите должность</option>
                         {% for position in positions %}
                             <option {% if user.position_id == position.id %} selected {% endif %} value="{{ position.id }}">{{ position.name }}</option>
                         {% endfor %}
@@ -36,8 +36,8 @@
                 <label for="departament_id" class="col-md-4 col-form-label text-md-right">Подразделение</label>
 
                 <div class="col-md-6">
-                    <select id="departament_id" class="form-control @error('departament_id') is-invalid @enderror" name="departament_id" required autofocus>
-                        <option {% if user.departament_id == None %} selected {% endif %} value>Укажите подразделение</option>
+                    <select id="departament_id" class="form-control " name="departament_id" required autofocus>
+                        <option {% if user.departament_id != None %} selected {% endif %} value>Укажите подразделение</option>
                         {% for department in departaments %}
                             <option {% if user.departament_id == departmen.id %} selected {% endif %} data-level="{{ department.level }}" value="{{ department.id }}">{{ department.name }}</option>
                         {% endfor %}
