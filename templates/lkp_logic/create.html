@@ -22,27 +22,12 @@
                 <label for="name" class="col-md-4 col-form-label text-md-right">Название</label>
                 <div class="col-md-6">
                     <input id="name" class="form-control " name="name" required autofocus>
-                    {% if messages %}  <!-- ('name') -->
-                        <span class="invalid-feedback" role="alert">
-                            {% for message in messages %} 
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                            {% endfor %}
-                        </span>
-                        {% endif %}
                 </div>
             </div>
-
             <div class="form-group row">
                 <label for="description" class="col-md-4 col-form-label text-md-right">Описание</label>
                 <div class="col-md-6">
-                    <input id="description" class="form-control @error('description') is-invalid @enderror" name="description" required>
-                    {% if messages %}  <!-- ('description') -->
-                        <span class="invalid-feedback" role="alert">
-                            {% for message in messages %} 
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                            {% endfor %}
-                        </span>
-                    {% endif %}
+                    <input id="description" class="form-control" name="description" required>
                 </div>
             </div>
 
