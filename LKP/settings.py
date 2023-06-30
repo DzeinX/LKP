@@ -152,3 +152,6 @@ MESSAGE_TAGS = {
     messages.WARNING: 'p-2 list-group-item list-group-item-warning text-center',
     messages.ERROR: 'p-2 list-group-item list-group-item-danger text-center',
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

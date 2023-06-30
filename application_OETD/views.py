@@ -1,5 +1,10 @@
+from datetime import datetime
+
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import default_storage
 from django.shortcuts import render
+from auth_ldap.models import User as current_user
+from .models import *
 
 
 @login_required(login_url='login_page')
@@ -34,7 +39,25 @@ def login_page(request):
 
 @login_required
 def create(request):
-    context = {}
+    if request.method == "POST":
+        name = request.POST["name"]
+        description = request.POST["description"]
+        date_now = datetime.now()
+        document = request.FILES["file"]
+        document_name = default_storage.save(f'{request.user.id}.{document.name.split(".")[1]}',document)
+        file_category_id = request.POST["file_category_id"]
+        file_category = FilesCatigories.objects.get(id=file_category_id)
+        user = current_user.objects.get(id=request.user.id)
+        Files.objects.create(created_at=date_now,
+                             updated_at=date_now,
+                             path=document_name,
+                             name=name,
+                             description=description,
+                             file_category_id=file_category,
+                             user_id=user)
+
+    categories = FilesCatigories.objects.all()
+    context = {'categories': categories}
     return render(request, 'lkp_logic/create.html', context)
 
 

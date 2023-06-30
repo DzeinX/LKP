@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-
+from auth_ldap.models import User
 
 # Отчетный период
 class Permissions(models.Model):
@@ -226,7 +226,7 @@ class Files(models.Model):
     name = models.TextField('Наименование', max_length=250)
     description = models.TextField('Описание', max_length=250)
     file_category_id = models.ForeignKey(FilesCatigories, on_delete=models.SET_NULL, null=True)
-    user_id = models.ForeignKey(Users, on_delete=models.SET_NULL, null=True)
+    user_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return f'{self.name}'

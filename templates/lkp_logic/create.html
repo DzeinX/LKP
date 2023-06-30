@@ -35,19 +35,12 @@
             <div class="form-group row">
                 <label for="file_category_id" class="col-md-4 col-form-label text-md-right">Категория</label>
                 <div class="col-md-6">
-                    <select id="file_category_id" class="form-control @error('file_category_id') is-invalid @enderror" name="file_category_id" required>
+                    <select id="file_category_id" class="form-control " name="file_category_id" required>
                         <option selected disabled value>Укажите категорию</option>
                         {% for category in categories %}
                             <option value="{{ category.id }}">{{ category.name }}</option>
                         {% endfor %}
                     </select>
-                    {% if messages %} <!-- @error('file_category_id') -->
-                        <span class="invalid-feedback" role="alert">
-                            {% for message in messages %} 
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                            {% endfor %}
-                        </span>
-                    {% endif %}
                 </div>
             </div>
 
@@ -55,14 +48,14 @@
             <div class="form-group row">
                 <label for="file" class="col-md-4 col-form-label text-md-right">Файл</label>
                 <div class="col-md-6">
-                    <input id="file" type="file" class="@error('file') is-invalid @enderror" name="file" required>
-                    {% if messages %} <!-- @error('file') -->
-                    <span class="invalid-feedback" role="alert">
-                        {% for message in messages %} 
-                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                        {% endfor %}
-                    </span>
-                    {% endif %}
+                    <input id="file" type="file"  name="file" required>
+<!--                    {% if messages %} &lt;!&ndash; @error('file') &ndash;&gt;-->
+<!--                    <span class="invalid-feedback" role="alert">-->
+<!--                        {% for message in messages %} -->
+<!--                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>-->
+<!--                        {% endfor %}-->
+<!--                    </span>-->
+<!--                    {% endif %}-->
                 </div>
             </div>
 
