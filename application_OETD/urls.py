@@ -5,6 +5,7 @@ from . import views
 
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='home')),
     path('main', views.main, name='main'),
     path('home', views.home, name='home'),
     path('base_template', views.base_template, name='base_template'),
@@ -18,5 +19,5 @@ urlpatterns = [
     path('efficiency', views.efficiency, name='efficiency'),
     path('portfolio', views.portfolio, name='portfolio'),
     path('report', views.report, name='report'),
-    path('show', views.show, name='show')
+    path('show/<int:_id>', views.show, name='show')
 ]
