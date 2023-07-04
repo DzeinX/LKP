@@ -1,4 +1,6 @@
+
 {% extends "Base_template.html" %}
+
 
 {% block title %}
 
@@ -29,6 +31,7 @@
                        class="col-md-4 col-form-label text-md-right">Должность</label>
 
                 <div class="col-md-6">
+
                     <select id="position_id"
                             class="form-control m-2"
                             name="position_id"
@@ -41,6 +44,7 @@
                                     value>
                             Укажите должность
                         </option>
+
                         {% for position in positions %}
                             <option
                                     {% if user.position_id == position.id %}
@@ -59,6 +63,7 @@
                        class="col-md-4 col-form-label text-md-right">Подразделение</label>
 
                 <div class="col-md-6">
+
                     <select id="departament_id"
                             class="form-control m-2"
                             name="departament_id"
@@ -80,6 +85,7 @@
                                         value="{{ department.id }}">
                                 {{ department.name }}
                             </option>
+
                         {% endfor %}
                     </select>
                 </div>
@@ -89,6 +95,7 @@
                 <label for="orcid"
                        class="col-md-4 col-form-label text-md-right">ORCID</label>
                 <div class="col-md-6">
+
                     {% if user.orcid != None %}
                         <input id="spin"
                                class="form-control m-2" name="orcid" value="{{ user.orcid }}"
@@ -96,6 +103,7 @@
                     {% else %}
                         <input id="spin"
                                class="form-control m-2" name="orcid" placeholder="Напишите, если у вас есть">
+
                     {% endif %}
                 </div>
             </div>
@@ -104,6 +112,7 @@
                 <label for="wosrid"
                        class="col-md-4 col-form-label text-md-right">WOS Researcher ID</label>
                 <div class="col-md-6">
+
                     {% if user.wosrid != None %}
                         <input id="spin"
                                class="form-control m-2" name="wosrid" value="{{ user.wosrid }}"
@@ -111,6 +120,7 @@
                     {% else %}
                         <input id="spin"
                                class="form-control m-2" name="wosrid" placeholder="Напишите, если у вас есть">
+
                     {% endif %}
                 </div>
             </div>
@@ -119,6 +129,7 @@
                 <label for="said"
                        class="col-md-4 col-form-label text-md-right">Scopus Author ID</label>
                 <div class="col-md-6">
+
                     {% if user.said != None %}
                         <input id="spin"
                                class="form-control m-2" name="said" value="{{ user.said }}"
@@ -126,6 +137,7 @@
                     {% else %}
                         <input id="spin"
                                class="form-control m-2" name="said" placeholder="Напишите, если у вас есть">
+
                     {% endif %}
                 </div>
             </div>
@@ -134,6 +146,7 @@
                 <label for="spin"
                        class="col-md-4 col-form-label text-md-right">SPIN</label>
                 <div class="col-md-6">
+
                     {% if user.spin != None %}
                         <input id="spin"
                                class="form-control m-2" name="spin" value="{{ user.spin }}"
@@ -141,6 +154,7 @@
                     {% else %}
                         <input id="spin"
                                class="form-control m-2" name="spin" placeholder="Напишите, если у вас есть">
+
                     {% endif %}
                 </div>
             </div>
