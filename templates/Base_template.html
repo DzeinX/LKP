@@ -24,7 +24,7 @@
 <div id="app">
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="{% url "home" %}">ЛКП</a>
+            <a class="navbar-brand" href="{% url "home" %}">Личный Кабинет Преподавателя</a>
 
             <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarSupportedContent">
                 <!-- Left Side Of Navbar -->
@@ -39,7 +39,11 @@
                         <li class="dropdown nav-item">
                             <a id="dropdownMenuLink" class="nav-link dropdown-toggle" href="#" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ user.full_name }}
+                                {% if user.full_name != None %}
+                                    {{ user.full_name }}
+                                {% else %}
+                                    {{ user.username }}
+                                {% endif %}
                             </a>
 
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -47,7 +51,7 @@
                                     <a class="dropdown-item" href="{% url "logout_page" %}">Выйти</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{% url "edit" %}"> <!-- Редактирование пользователя -->
+                                    <a class="dropdown-item" href="{% url "edit" %}">
                                         Редактировать профиль
                                     </a>
                                 </li>
