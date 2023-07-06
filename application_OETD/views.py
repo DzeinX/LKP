@@ -159,26 +159,34 @@ def report(request):
 @login_required(login_url='login_page')
 def show(request, _id):
     if request.method == "GET":
-        users = User.objects.all()
         field = Fields.objects.get(id=_id)
-        form = Forms.objects.get(id=field.id)
 
-        access_users = []
-        for user in users:
-            values = list(Values.objects.filter(user_id=user.id, field_id=field.id).all())
-            categories_values = []
-            for value in values:
-                category = Categories.objects.get(id=value.id)
-                category_value = {'category': category, 'value': value}
-                categories_values.append(category_value)
-            access_users.append([user, categories_values])
+        if field.inspector_id == request.user.inspector_id:
+            users = User.objects.all()
+            form = Forms.objects.get(id=field.id)
 
-        context = {
-            "field": field,
-            "users": access_users,
-            "form": form
-        }
-        return render(request, 'lkp_logic/show.html', context)
+            access_users = []
+            for user in users:
+                values = list(Values.objects.filter(user_id=user.id, field_id=field.id).all())
+                categories_values = []
+                for value in values:
+                    category = Categories.objects.get(id=value.id)
+                    category_value = {
+                        'category': category,
+                        'value': value
+                    }
+                    categories_values.append(category_value)
+                access_users.append([user, categories_values])
+
+            context = {
+                "field": field,
+                "users": access_users,
+                "form": form
+            }
+            return render(request, 'lkp_logic/show.html', context)
+
+        messages.error(request, 'У вас нет доступа к этому критерию')
+        return redirect('home')
 
     messages.error(request, 'Не определён метод запроса')
     return redirect('home')
