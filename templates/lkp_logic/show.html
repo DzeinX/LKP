@@ -1,5 +1,6 @@
 {% extends 'Base_template.html' %}
 
+
 {% block title %}
     Критерий
 {% endblock %}
@@ -27,36 +28,44 @@
             </div>
         </div>
         {% if users|length != 0 %}
-            {% for user_lkp in users %}
-                {% if user_lkp.values|length != 0 %}
-                    <div class="row mb-3">
-                        <div class="col-4">
-                            <a href="#" target="_blank" title="Открыть портфолио">
-                                {{ user_lkp.name }}
-                            </a>
-                        </div>
-                        <div class="col">
-                            {% for value in user_lkp.values %}
-                                <div class="row mb-1">
+            {% for user_lkp, categories_values in users %}
+                <div class="row mb-3">
+                    <div class="col-4">
+                        <a href="{% url 'portfolio' user_lkp.id %}" target="_blank" title="Открыть портфолио">
+                            {% if user_lkp.full_name != None %}
+                                {{ user_lkp.full_name }}
+                            {% else %}
+                                {{ user_lkp.username }}
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="col">
+                        {% for category_value in categories_values %}
+                            <div class="row mb-1">
 
-                                    <div class="col-5">
-                                        None
-                                    </div>
+                                <div class="col-5">
+                                    {{ category_value.category.name }}
+                                </div>
 
-                                    <div class="col">
-                                        <div class="inspector-value-form"
-                                             data-userid="{{ user_lkp.id }}"
-                                             data-valueid="{{ value.id }}"
-                                             data-value="{{ value.value }}"
-                                             data-comment="{{ value.comment }}"
-                                             data-commentable="{{ field.form.commentable }}"
-                                        ></div>
+                                <div class="col flex">
+                                    <div class="inspector-value-form"
+                                         data-userid="{{ user_lkp.id }}"
+                                         data-valueid="{{ category_value.value.id }}"
+                                         data-value="{{ category_value.value.value }}"
+                                         data-comment="{{ category_value.value.comment }}"
+                                         data-commentable="{{ form.commentable }}">
+                                        <form method="POST" action="{% url "show" field.id %}">
+                                            {% csrf_token %}
+                                            <input type="text" value="{{ category_value.value.value }}" name="value" class="form-control w-50">
+                                            <input type="hidden" name="category" value="{{ category_value.category.id }}">
+                                            <input type="submit" class="btn btn-primary">
+                                        </form>
                                     </div>
                                 </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endif %}
+                </div>
             {% endfor %}
         {% else %}
             <p><i>Показатели не найдены. Возможно, еще никто не заполнил данный критерий.</i></p>

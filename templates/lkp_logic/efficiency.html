@@ -1,32 +1,32 @@
-{%extends "app.html" %}
+{% extends "Base_template.html" %}
 
-{% block content %}
+{% block title %}
+    Показатели эффективности
+{% endblock %}
+
+{% block body %}
     <div class="container">
         <h1>Показатели эффективности</h1>
-        {% if forms isNotEmpty() %}
-        <div class="row">
-            {% for form in forms %}
-                <div class="col-lg-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ form.name }}</h5>
-                        <!--    @php                                                                                                               
-                                $formPositionsId = Arr::pluck($form->positions->toArray(), 'id');
-                                $usersForm = array_search(Auth::user()->position_id, $formPositionsId) !== false;    
-                            @endphp -->
-                            {% if usersForm <!-- если должность пользователя и формы совпадает-->  %}                                     
-                                <a href="#" class="card-link">Заполнить</a> <!-- {{ route('forms.edit', ['form' => $form->id]) }} -->
-                            {% endif %}
-                            {% if Auth.user.can ('edit', someValue)%} <!-- если пользователь может редактировать значения -->
-                                <a href="#" class="card-link">Проверить</a> <!-- {{ route('fields.index', ['form' => $form->id]) }} -->
-                            {% endif %}
+        {% if forms %}
+            <div class="row">
+                {% for form, is_can_fill, is_can_check in forms %}
+                    <div class="col-lg-4">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ form.name }}</h5>
+                                {% if is_can_fill %}
+                                    <a href="{% url 'critery_category' %}" class="card-link">Заполнить</a>
+                                {% endif %}
+                                {% if is_can_check %}
+                                    <a href="{% url 'critery' %}" class="card-link">Проверить</a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
         {% else %}
             <p><i>Анкеты за активный отчетный период не найдены.</i></p>
         {% endif %}
     </div>
-{% endblock  %}
+{% endblock %}

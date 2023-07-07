@@ -1,4 +1,6 @@
+
 {% extends "Base_template.html" %}
+
 
 {% block title %}
     Категория 
@@ -49,6 +51,7 @@
                                             {% for value in field.values %}
                                                 {% if value.category_id == category.id %}
                                                     <!-- Если такое значение существует -->
+
                                                     <td>
                                                         {% if category.was_active %}
                                                             <input type="hidden" name="value[{{ fieldIndex }}][id]" value="{{ value.id}}">
