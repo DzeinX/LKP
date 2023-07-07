@@ -188,5 +188,11 @@ def show(request, _id):
         messages.error(request, 'У вас нет доступа к этому критерию')
         return redirect('home')
 
+    if request.method == "POST":
+
+
+        messages.success(request, 'Данные успешно сохранены!')
+        return redirect('show')
+
     messages.error(request, 'Не определён метод запроса')
     return redirect('home')

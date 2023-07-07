@@ -47,15 +47,19 @@
                                     {{ category_value.category.name }}
                                 </div>
 
-                                <div class="col">
+                                <div class="col flex">
                                     <div class="inspector-value-form"
                                          data-userid="{{ user_lkp.id }}"
                                          data-valueid="{{ category_value.value.id }}"
                                          data-value="{{ category_value.value.value }}"
                                          data-comment="{{ category_value.value.comment }}"
-                                         data-commentable="{{ form.commentable }}"
-                                    >
-                                        {{ category_value.value.value }}
+                                         data-commentable="{{ form.commentable }}">
+                                        <form method="POST" action="{% url "show" field.id %}">
+                                            {% csrf_token %}
+                                            <input type="text" value="{{ category_value.value.value }}" name="value" class="form-control w-50">
+                                            <input type="hidden" name="category" value="{{ category_value.category.id }}">
+                                            <input type="submit" class="btn btn-primary">
+                                        </form>
                                     </div>
                                 </div>
                             </div>
