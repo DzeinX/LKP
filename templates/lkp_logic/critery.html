@@ -10,23 +10,25 @@
         <p>Критерии, доступные для проверки вам.</p>
 
         {% if fields.length != 0 %}
-            <div class="dropdown show mb-3">
-                <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
+            <div class="dropdown nav-item">
+                <a id="dropdownMenuLink" class="btn btn-primary dropdown-toggl" href="#" role="button"
+                   data-bs-toggle="dropdown" aria-expanded="false">
                     Отчет (.xlsx)
                 </a>
-                <div class="dropdown-menu">
+                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     {% for category in categories %}
-                        <a href="#"
-                           class="dropdown-item">
+                     <li>
+                        <a class="dropdown-item" href="#">
                             {{ category.name }}
                         </a>
+                      </li>
                     {% endfor %}
-                </div>
+                 </ul>
             </div>
 
             <div class="list-group">
                 {% for field in fields %}
-                <a href="#">> class="list-group-item list-group-item-action">
+                <a href="#" class="list-group-item list-group-item-action">
                     {{ field.name }}
                 </a>
                 {% endfor %}

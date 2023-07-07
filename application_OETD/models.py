@@ -1,6 +1,9 @@
+import datetime
+
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from auth_ldap.models import User
+
 
 # Отчетный период
 class Permissions(models.Model):
@@ -60,6 +63,13 @@ class Categories(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+
+    def was_active(self):
+        date_now = datetime.datetime.now().date()
+        if self.start >= date_now and self.end <= date_now:
+            return True
+        else:
+            return False
 
 
 class ReportingPeriods(models.Model):

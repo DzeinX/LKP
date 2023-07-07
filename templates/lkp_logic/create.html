@@ -7,14 +7,13 @@
 {% block body %}
     <div class="container">
         <h1>Файл</h1>
-        {% if errors.any %}
-            <div class="alert alert-danger">
-                <ul>
-                    {% for error in errors.all %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
+        {% if messages %}
+        <ul class="messages list-group">
+            {% for message in messages %}
+            <li
+            {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
         {% endif %}
         <form method="post"  enctype="multipart/form-data">
             {% csrf_token %}
@@ -49,13 +48,6 @@
                 <label for="file" class="col-md-4 col-form-label text-md-right">Файл</label>
                 <div class="col-md-6">
                     <input id="file" type="file"  name="file" required>
-<!--                    {% if messages %} &lt;!&ndash; @error('file') &ndash;&gt;-->
-<!--                    <span class="invalid-feedback" role="alert">-->
-<!--                        {% for message in messages %} -->
-<!--                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>-->
-<!--                        {% endfor %}-->
-<!--                    </span>-->
-<!--                    {% endif %}-->
                 </div>
             </div>
 
