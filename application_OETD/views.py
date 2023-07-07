@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect
-from auth_ldap.models import User as current_user
+
 
 from .models import *
 from django.contrib import messages
@@ -58,7 +58,7 @@ def create(request):
 
         try:
             file_category = FilesCatigories.objects.get(id=file_category_id)
-            user = current_user.objects.get(id=request.user.id)
+            user = User.objects.get(id=request.user.id)
             Files.objects.create(created_at=date_now,
                                  updated_at=date_now,
                                  path=document_name,
