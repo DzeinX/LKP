@@ -30,7 +30,7 @@
 
             <div class="list-group">
                 {% for field in fields %}
-                <a href="#" class="list-group-item list-group-item-action">
+                <a href="{% url 'show' field.id %}" class="list-group-item list-group-item-action">
                     {{ field.name }}
                 </a>
                 {% endfor %}

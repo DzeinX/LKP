@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 
 from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect
-from auth_ldap.models import User as current_user
 
 from .models import *
 from django.contrib import messages
@@ -58,7 +57,7 @@ def create(request):
 
         try:
             file_category = FilesCatigories.objects.get(id=file_category_id)
-            user = current_user.objects.get(id=request.user.id)
+            user = User.objects.get(id=request.user.id)
             Files.objects.create(created_at=date_now,
                                  updated_at=date_now,
                                  path=document_name,
@@ -223,17 +222,20 @@ def show(request, _id):
             form = Forms.objects.get(id=field.id)
 
             access_users = []
-            for user in users:
+            for index, user in enumerate(users):
                 values = list(Values.objects.filter(user_id=user.id, field_id=field.id).all())
+                if not values:
+                    continue
+
                 categories_values = []
                 for value in values:
-                    category = Categories.objects.get(id=value.id)
+                    category = Categories.objects.get(id=value.category_id)
                     category_value = {
                         'category': category,
                         'value': value
                     }
                     categories_values.append(category_value)
-                access_users.append([user, categories_values])
+                access_users.append([user, categories_values, index + 1])
 
             context = {
                 "field": field,
@@ -246,10 +248,30 @@ def show(request, _id):
         return redirect('home')
 
     if request.method == "POST":
+        form_id = request.POST['form_id'].split('-')
 
+        # if request.POST.get("save_all"):
+        #     form_length = request.POST['form_length']
+
+        try:
+            category_id = request.POST[f'category_id-{form_id[0]}']
+            user_id = request.POST[f'user_id-{form_id[0]}']
+            new_value = request.POST[f'value-{form_id[0]}-{form_id[1]}'].replace(' ', '').rstrip()
+
+            if new_value:
+                user_answer = Values.objects.filter(user_id=user_id, category_id=category_id).first()
+                user_answer.value = new_value
+                user_answer.save()
+            else:
+                messages.error(request, f'Значение введено некорректно')
+                return redirect('show', _id)
+
+        except Exception as e:
+            messages.error(request, f'Не удалось сохранить данные. Ошибка: {e}')
+            return redirect('show', _id)
 
         messages.success(request, 'Данные успешно сохранены!')
-        return redirect('show')
+        return redirect('show', _id)
 
     messages.error(request, 'Не определён метод запроса')
     return redirect('home')
