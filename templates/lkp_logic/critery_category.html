@@ -29,7 +29,7 @@
                             Значение
                         </th>
                         {% for category in categories %}
-                            {% if not  category.willBeActive %}
+                            {% if not  category.was_active %}
                                 <th {% if form.commentable %} colspan="2" {% endif %}>
                                     {{ category.name }}
                                 </th>
@@ -45,8 +45,7 @@
                                 <td>{{ field.name }}</td>
                                 <td>{{ field.description }}</td>
                                 {% for category in categories %}
-
-                                    {% if category.willBeActive %}
+                                    {% if category.was_active %}
                                         <!-- если критерий содержит значения -->
                                         {% if field.values.count > 0 %}
                                             {% for value in field.values %}
@@ -54,19 +53,19 @@
                                                     <!-- Если такое значение существует -->
 
                                                     <td>
-                                                        {% if category.wasActive %}
+                                                        {% if category.was_active %}
                                                             <input type="hidden" name="value[{{ fieldIndex }}][id]" value="{{ value.id}}">
                                                             <input type="hidden" name="value[{{ fieldIndex }}][field_id]" value="{{ value.field_id }}">
                                                             <input type="hidden" name="value[{{ fieldIndex }}][category_id]" value="{{ category.id }}">
                                                         {% endif %}
-                                                        <input {% if category.wasActive %} name="value[{{ fieldIndex }}][value]" {% endif %} class="form-control w-auto"
-                                                            value="{{ value.value }}" placeholder="Значение"  {% if category.wasActive %} readonly {% endif %}
+                                                        <input {% if category.was_active %} name="value[{{ fieldIndex }}][value]" {% endif %} class="form-control w-auto"
+                                                            value="{{ value.value }}" placeholder="Значение"  {% if category.was_active %} readonly {% endif %}
                                                             data-toggle="tooltip" data-placement="left" title="{{ field.name }}">
                                                     </td>
                                                     {%if form.commentable %}
                                                         <td>
-                                                            <textarea rows="4" {% if category.wasActive %}  name="value[{{ fieldIndex }}][comment]" {% endif %} class="form-control w-auto"
-                                                                      placeholder="Комментарий" {% if category.wasActive %} readonly {%endif%} >{{ value.comment }}</textarea>
+                                                            <textarea rows="4" {% if category.was_active %}  name="value[{{ fieldIndex }}][comment]" {% endif %} class="form-control w-auto"
+                                                                      placeholder="Комментарий" {% if category.was_active %} readonly {%endif%} >{{ value.comment }}</textarea>
                                                         </td>
                                                     {% endif %}
                                                 {% endif %}
@@ -80,13 +79,13 @@
                                                 <input type="hidden" name="value[{{ fieldIndex }}][field_id]" value="{{ field.id }}">
                                                 <input type="hidden" name="value[{{ fieldIndex }}][category_id]" value="{{ category.id }}">
                                                 <input name="value[{{ fieldIndex }}][value]" class="form-control w-auto"
-                                                       placeholder="Значение"  {% if category.wasActive%} readonly {% endif %}
+                                                       placeholder="Значение"  {% if category.was_active%} readonly {% endif %}
                                                        data-toggle="tooltip" data-placement="left" title="{{ field.name }}">
                                             </td>
                                             {% if form.commentable %}
                                                 <td>
                                                     <textarea rows="4" name="value[{{ fieldIndex }}][comment]" class="form-control w-auto"
-                                                              placeholder="Комментарий" {% if category.wasActive%} readonly {% endif %}></textarea>
+                                                              placeholder="Комментарий" {% if category.was_active%} readonly {% endif %}></textarea>
                                                 </td>
                                             {% endif %}
                                         {% endif %}

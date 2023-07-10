@@ -10,27 +10,27 @@
         <h1>Критерии</h1>
         <p>Критерии, доступные для проверки вам.</p>
 
-        {% if fields|length != 0 %}
+        {% if fields.length != 0 %}
+            <div class="dropdown nav-item">
+                <a id="dropdownMenuLink" class="btn btn-primary dropdown-toggl" href="#" role="button"
+                   data-bs-toggle="dropdown" aria-expanded="false">
 
-            <div class="dropdown show mb-3">
-                <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown">
                     Отчет (.xlsx)
                 </a>
-                <div class="dropdown-menu">
+                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     {% for category in categories %}
-                        <a href="#"
-                           class="dropdown-item">
+                     <li>
+                        <a class="dropdown-item" href="#">
                             {{ category.name }}
-                        </a>    <!--{{ route ('forms.reportCategoryInspector', [
-                    'form' = form,
-                    'category' = category,
-                    'inspector' = \Illuminate\Support\Facades\Auth::user()->inspector_id]) }} -->
+                        </a>
+                      </li>
                     {% endfor %}
-                </div>
+                 </ul>
             </div>
+
             <div class="list-group">
                 {% for field in fields %}
-                <a href="#">> class="list-group-item list-group-item-action">
+                <a href="{% url 'show' field.id %}" class="list-group-item list-group-item-action">
                     {{ field.name }}
                 </a>
                 {% endfor %}

@@ -15,7 +15,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ form.name }}</h5>
                                 {% if is_can_fill %}
-                                    <a href="{% url 'critery_category' %}" class="card-link">Заполнить</a>
+                                    <a href="{% url 'critery_category' form.id %}" class="card-link">Заполнить</a>
                                 {% endif %}
                                 {% if is_can_check %}
                                     <a href="{% url 'critery' %}" class="card-link">Проверить</a>

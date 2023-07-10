@@ -1,3 +1,4 @@
+import datetime
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -10,10 +11,12 @@ class Positions(models.Model):
     name = models.CharField(max_length=250, null=False)
 
 
+
 # Отчетный период
 class Permissions(models.Model):
     key = models.CharField('Значение', max_length=250)
     table_name = models.CharField('Название таблицы', max_length=250, null=True)
+
     created_at = models.DateTimeField('Время создание ', null=True)
     updated_at = models.DateTimeField('Время изменения', null=True)
 
@@ -67,6 +70,13 @@ class Categories(models.Model):
     def __str__(self):
         return f'{self.name}'
 
+    def was_active(self):
+        date_now = datetime.datetime.now().date()
+        if self.start >= date_now and self.end <= date_now:
+            return True
+        else:
+            return False
+
 
 class ReportingPeriods(models.Model):
     name = models.CharField('Наименование', max_length=250)
@@ -92,6 +102,7 @@ class Forms(models.Model):
     commentable = models.CharField('Описание', null=True, max_length=512)
 
     reporting_period = models.ForeignKey(ReportingPeriods, on_delete=models.SET_NULL, null=True)
+
 
     def __str__(self):
         return f'{self.name}'
@@ -229,6 +240,7 @@ class Files(models.Model):
 
     file_category = models.ForeignKey(FilesCatigories, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
 
     def __str__(self):
         return f'{self.name}'
