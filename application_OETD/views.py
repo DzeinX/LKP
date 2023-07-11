@@ -74,10 +74,6 @@ def create(request):
     return redirect('create')
 
 
-
-
-
-
 @login_required(login_url='login_page')
 def critery(request):
     if request.method == "GET":
@@ -172,24 +168,13 @@ def efficiency(request):
             if inspector_id is not None:
                 access = [field if field.inspector_id == inspector_id else None for field in fields]
 
-            if len(access) == access.count(None):
-                # Точно не может проверить форму
-                if reporting_period.active and form_position is not None:
-                    # Может заполнить
-                    access_forms.append([form, True, False])
-                else:
-                    # Не может заполнить
-                    access_forms.append([form, False, False])
-            else:
-                # Точно может проверить форму
-                if reporting_period.active and form_position is not None:
-                    # Может заполнить
-                    access_forms.append([form, True, True])
-                else:
-                    # Не может заполнить
-                    access_forms.append([form, False, True])
+            is_can_fill = True if reporting_period.active and form_position is not None else False
+            is_can_check = True if len(access) != access.count(None) else False
+            is_can_read = not is_can_fill
 
-            # access_forms -> [[форма, может_заполнить, может_проверить], [...], ...]
+            access_forms.append([form, is_can_fill, is_can_check, is_can_read])
+
+            # access_forms -> [[форма, может_заполнить, может_проверить, может_просмотреть], [...], ...]
 
         context = {
             'forms': access_forms
