@@ -1,6 +1,4 @@
-
 {% extends "Base_template.html" %}
-
 
 {% block title %}
     Категория 
@@ -61,12 +59,13 @@
                                                             value="{{ value.value }}" placeholder="Значение"  {% if category.was_active %} readonly {% endif %}
                                                             data-toggle="tooltip" data-placement="left" title="{{ field.name }}">
                                                     </td>
-                                                    {%if form.commentable %}
+                                                    {% if form.commentable %}
                                                         <td>
                                                             <textarea rows="4" {% if category.was_active %}  name="value[{{ fieldIndex }}][comment]" {% endif %} class="form-control w-auto"
                                                                       placeholder="Комментарий" {% if category.was_active %} readonly {%endif%} >{{ value.comment }}</textarea>
                                                         </td>
                                                     {% endif %}
+                                                {% endif %}
                                             {% endfor %}
                                         {% endif %}
                                         <!-- /если критерий содержит значения -->
@@ -87,7 +86,6 @@
                                                 </td>
                                             {% endif %}
                                         {% endif %}
-                                    {% endif %}
                                     <!--  /если категории не предстоит быть активной -->
                                 {% endfor %}
                                 <!--  /для каждой категории -->
