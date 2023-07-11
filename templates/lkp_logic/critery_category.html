@@ -47,7 +47,6 @@
                                 {% for category in categories %}
                                     {% if category.was_active %}
                                         <!-- если критерий содержит значения -->
-                                        {% if field.values.count > 0 %}
                                             {% for value in field.values %}
                                                 {% if value.category_id == category.id %}
                                                     <!-- Если такое значение существует -->
@@ -68,7 +67,6 @@
                                                                       placeholder="Комментарий" {% if category.was_active %} readonly {%endif%} >{{ value.comment }}</textarea>
                                                         </td>
                                                     {% endif %}
-                                                {% endif %}
                                             {% endfor %}
                                         {% endif %}
                                         <!-- /если критерий содержит значения -->
