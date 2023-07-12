@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect
 
-
 from .models import *
 from django.contrib import messages
 
@@ -42,9 +41,8 @@ def login_page(request):
 
 @login_required(login_url='login_page')
 def create(request):
-
     if request.method == "GET":
-        categories = FilesCatigories.objects.all()
+        categories = FileCategory.objects.all()
         context = {'categories': categories}
         return render(request, 'lkp_logic/create.html', context)
 
@@ -53,23 +51,23 @@ def create(request):
         description = request.POST["description"]
         date_now = datetime.now()
         document = request.FILES["file"]
-        document_name = default_storage.save(f'{request.user.id}.{document.name.split(".")[1]}',document)
+        document_name = default_storage.save(f'{request.user.id}.{document.name.split(".")[1]}', document)
         file_category_id = request.POST["file_category_id"]
 
         try:
-            file_category = FilesCatigories.objects.get(id=file_category_id)
+            file_category = FileCategory.objects.get(id=file_category_id)
             user = User.objects.get(id=request.user.id)
-            Files.objects.create(created_at=date_now,
-                                 updated_at=date_now,
-                                 path=document_name,
-                                 name=name,
-                                 description=description,
-                                 file_category_id=file_category,
-                                 user_id=user)
+            File.objects.create(created_at=date_now,
+                                updated_at=date_now,
+                                path=document_name,
+                                name=name,
+                                description=description,
+                                file_category_id=file_category,
+                                user_id=user)
         except Exception as e:
-            messages.error(request,f'Данные не сохранены.Ошибка: {e}')
+            messages.error(request, f'Данные не сохранены.Ошибка: {e}')
             return redirect('create')
-        messages.success(request,f'Данные успешно сохранены')
+        messages.success(request, f'Данные успешно сохранены')
         return redirect('create')
     messages.error(request, f'Не опредленный метод запроса')
     return redirect('create')
@@ -78,27 +76,27 @@ def create(request):
 @login_required(login_url='login_page')
 def critery(request):
     if request.method == "GET":
-        fields = Fields.objects.all()
-        categories = FilesCatigories.objects.all()
+        fields = Field.objects.all()
+        categories = FileCategory.objects.all()
         context = {'categories': categories,
-                   'fields':fields}
+                   'fields': fields}
         return render(request, 'lkp_logic/critery.html', context)
     messages.error(request, f'Не опредленный метод запроса')
     return redirect('critery')
 
 
 @login_required
-def critery_category(request,_id):
+def critery_category(request, _id):
     if request.method == "GET":
-        form = Forms.objects.get(id = _id)
-        fields = Fields.objects.filter(form_id = form.id).all()
-        form_categories = list(FormCategory.objects.filter(form_id = form.id).all())
+        form = Form.objects.get(id=_id)
+        fields = Field.objects.filter(form_id=form.id).all()
+        form_categories = list(FormCategory.objects.filter(form_id=form.id).all())
 
         # categories = [Categories.objects.get(id =int(category.category_id)) for category in form_categories ]
-        categories = [category.category_id for category in form_categories ]
-        context = {'form':form,
-                   'field':fields,
-                   'categories':categories
+        categories = [category.category_id for category in form_categories]
+        context = {'form': form,
+                   'field': fields,
+                   'categories': categories
                    }
         return render(request, 'lkp_logic/critery_category.html', context)
     messages.error(request, f'Не опредленный метод запроса')
@@ -108,8 +106,8 @@ def critery_category(request,_id):
 @login_required(login_url='login_page')
 def edit(request):
     if request.method == "GET":
-        positions = Positions.objects.all()
-        departments = Departments.objects.all()
+        positions = Position.objects.all()
+        departments = Department.objects.all()
         context = {
             'positions': positions,
             'departments': departments
@@ -125,8 +123,8 @@ def edit(request):
         spin = request.POST['spin']
 
         try:
-            position = Positions.objects.get(id=position_id)
-            departament = Departments.objects.get(id=departament_id)
+            position = Position.objects.get(id=position_id)
+            departament = Department.objects.get(id=departament_id)
 
             request.user.position_id = position
             request.user.departament_id = departament
@@ -156,12 +154,12 @@ def edit_add(request):
 @login_required(login_url='login_page')
 def efficiency(request):
     if request.method == "GET":
-        forms = Forms.objects.all()
+        forms = Form.objects.all()
 
         access_forms = []
         for form in forms:
-            fields = Fields.objects.filter(form_id=form.id).all()
-            reporting_period = ReportingPeriods.objects.get(id=form.reporting_period_id)
+            fields = Field.objects.filter(form_id=form.id).all()
+            reporting_period = ReportingPeriod.objects.get(id=form.reporting_period_id)
             form_position = FormPosition.objects.filter(position_id=request.user.position_id, form_id=form.id).first()
             inspector_id = request.user.inspector_id
 
@@ -201,21 +199,21 @@ def report(request):
 @login_required(login_url='login_page')
 def show(request, _id):
     if request.method == "GET":
-        field = Fields.objects.get(id=_id)
+        field = Field.objects.get(id=_id)
 
         if field.inspector_id == request.user.inspector_id:
             users = User.objects.all()
-            form = Forms.objects.get(id=field.id)
+            form = Form.objects.get(id=field.id)
 
             access_users = []
             for index, user in enumerate(users):
-                values = list(Values.objects.filter(user_id=user.id, field_id=field.id).all())
+                values = list(Value.objects.filter(user_id=user.id, field_id=field.id).all())
                 if not values:
                     continue
 
                 categories_values = []
                 for value in values:
-                    category = Categories.objects.get(id=value.category_id)
+                    category = Category.objects.get(id=value.category_id)
                     category_value = {
                         'category': category,
                         'value': value
@@ -245,7 +243,7 @@ def show(request, _id):
             new_value = request.POST[f'value-{form_id[0]}-{form_id[1]}'].replace(' ', '').rstrip()
 
             if new_value:
-                user_answer = Values.objects.filter(user_id=user_id, category_id=category_id).first()
+                user_answer = Value.objects.filter(user_id=user_id, category_id=category_id).first()
                 user_answer.value = new_value
                 user_answer.save()
             else:

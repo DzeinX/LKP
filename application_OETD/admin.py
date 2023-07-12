@@ -1,24 +1,151 @@
 from django.contrib import admin
 from .models import *
-admin.site.register(Permissions)
-admin.site.register(Departments)
-admin.site.register(User)
+admin.site.register(Permission)
+admin.site.register(Department)
 admin.site.register(PermissionRole)
-admin.site.register(Positions)
-admin.site.register(ReportingPeriods)
-admin.site.register(Fields)
-admin.site.register(MenuItems)
-admin.site.register(Categories)
-admin.site.register(Forms)
-admin.site.register(Files)
-admin.site.register(Roles)
-admin.site.register(FilesCatigories)
-admin.site.register(FormCategory)
-admin.site.register(FormPosition)
-admin.site.register(FormReportingPeriod)
-admin.site.register(Inspectors)
-admin.site.register(Translations)
-admin.site.register(Menus)
-admin.site.register(UserRoles)
-admin.site.register(Values)
+admin.site.register(Position)
+admin.site.register(MenuItem)
+admin.site.register(FileCategory)
+admin.site.register(Inspector)
+admin.site.register(Translation)
+admin.site.register(Menu)
 
+
+@admin.register(Value)
+class ValueAdmin(admin.ModelAdmin):
+    fields = [
+        'value',
+        'lock',
+        'comment',
+        'visible',
+        'field',
+        'user',
+        'category',
+    ]
+
+    raw_id_fields = ['field', 'user', 'category']
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    fields = [
+        'name',
+    ]
+
+
+@admin.register(ReportingPeriod)
+class ReportingPeriodAdmin(admin.ModelAdmin):
+    fields = [
+        'name',
+        'active',
+    ]
+
+
+@admin.register(Form)
+class FormAdmin(admin.ModelAdmin):
+    fields = [
+        'name',
+        'commentable',
+        'reporting_period',
+    ]
+
+    raw_id_fields = ['reporting_period', ]
+
+
+@admin.register(FormPosition)
+class FormPositionAdmin(admin.ModelAdmin):
+    fields = [
+        'form',
+        'position',
+    ]
+
+    raw_id_fields = ['form', 'position', ]
+
+
+@admin.register(FormCategory)
+class FormCategoryAdmin(admin.ModelAdmin):
+    fields = [
+        'form',
+        'category',
+    ]
+
+    raw_id_fields = ['form', 'category', ]
+
+
+@admin.register(FormReportingPeriod)
+class FormReportingPeriodAdmin(admin.ModelAdmin):
+    fields = [
+        'form',
+        'reporting_period',
+    ]
+
+    raw_id_fields = ['form', 'reporting_period', ]
+
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    fields = [
+        'username',
+        'password',
+        'full_name',
+        'is_active',
+        'objectguid',
+        'avatar',
+        'orcid',
+        'wosrid',
+        'said',
+        'spin',
+        'inspector',
+        'department',
+        'position',
+        'is_superuser',
+        'is_staff',
+        'first_name',
+        'last_name',
+        'email',
+    ]
+
+    raw_id_fields = ['inspector', 'department', 'position', ]
+
+
+@admin.register(UserRole)
+class UserRoleAdmin(admin.ModelAdmin):
+    fields = [
+        'user',
+        'role',
+    ]
+
+    raw_id_fields = ['user', 'role', ]
+
+
+@admin.register(Field)
+class FieldAdmin(admin.ModelAdmin):
+    fields = [
+        'index',
+        'name',
+        'description',
+        'form',
+        'inspector',
+    ]
+
+    raw_id_fields = ['form', 'inspector', ]
+
+
+@admin.register(Role)
+class RoleAdmin(admin.ModelAdmin):
+    fields = [
+        'name',
+        'display_name',
+    ]
+
+
+@admin.register(File)
+class FileAdmin(admin.ModelAdmin):
+    fields = [
+        'name',
+        'description',
+        'file_category',
+        'user',
+    ]
+
+    raw_id_fields = ['file_category', 'user', ]
