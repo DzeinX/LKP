@@ -96,7 +96,7 @@ def critery_category(request,_id):
         form = Forms.objects.get(id = _id)
         fields = Fields.objects.filter(form_id = form.id).all()
         form_categories = list(FormCategory.objects.filter(form_id = form.id).all())
-        print(form_categories[0].category_id)
+
         # categories = [Categories.objects.get(id =int(category.category_id)) for category in form_categories ]
         categories = [category.category_id for category in form_categories ]
         context = {'form':form,
