@@ -69,24 +69,24 @@ def create(request):
             return redirect('create')
         messages.success(request, f'Данные успешно сохранены')
         return redirect('create')
-    messages.error(request, f'Не опредленный метод запроса')
+    messages.error(request, f'Не определён метод запроса')
     return redirect('create')
 
 
 @login_required(login_url='login_page')
-def critery(request):
+def criteria(request):
     if request.method == "GET":
         fields = Field.objects.all()
         categories = FileCategory.objects.all()
         context = {'categories': categories,
                    'fields': fields}
-        return render(request, 'lkp_logic/critery.html', context)
-    messages.error(request, f'Не опредленный метод запроса')
-    return redirect('critery')
+        return render(request, 'lkp_logic/criteria.html', context)
+    messages.error(request, f'Не определён метод запроса')
+    return redirect('criteria')
 
 
 @login_required
-def critery_category(request, _id):
+def criteria_category(request, _id):
     if request.method == "GET":
         form = Form.objects.get(id=_id)
         fields = Field.objects.filter(form_id=form.id).all()
@@ -98,9 +98,9 @@ def critery_category(request, _id):
                    'field': fields,
                    'categories': categories
                    }
-        return render(request, 'lkp_logic/critery_category.html', context)
-    messages.error(request, f'Не опредленный метод запроса')
-    return redirect('critery_category')
+        return render(request, 'lkp_logic/criteria_category.html', context)
+    messages.error(request, f'Не определён метод запроса')
+    return redirect('criteria_category')
 
 
 @login_required(login_url='login_page')
