@@ -79,7 +79,7 @@ class Category(models.Model):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
-    def get_absolute_url(self):  # new
+    def get_absolute_url(self):
         return reverse("category_detail", args=[str(self.id)])
 
     def was_active(self):
@@ -130,7 +130,7 @@ class Form(models.Model):
         verbose_name = "Показатель эффективности"
         verbose_name_plural = "Показатели эффективности"
 
-    def get_absolute_url(self):  # new
+    def get_absolute_url(self):
         return reverse("form_details", args=[str(self.id)])
 
     def __str__(self):
@@ -151,7 +151,7 @@ class Field(models.Model):
         verbose_name = "Поле показателя эффективности"
         verbose_name_plural = "Поля показателей эффективности"
 
-    def get_absolute_url(self):  # new
+    def get_absolute_url(self):
         return reverse("field_detail", args=[str(self.id)])
 
     def __str__(self):
@@ -262,7 +262,7 @@ class User(AbstractUser):
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
-    def get_absolute_url(self):  # new
+    def get_absolute_url(self):
         return reverse("user_detail", args=[str(self.id)])
 
     def __repr__(self):
@@ -300,7 +300,7 @@ class Value(models.Model):
         verbose_name = "Значение пользователя"
         verbose_name_plural = "Значения пользователей"
 
-    def get_absolute_url(self):  # new
+    def get_absolute_url(self):
         return reverse("value_detail", args=[str(self.id)])
 
     def __str__(self):
@@ -320,7 +320,7 @@ class File(models.Model):
         verbose_name = "Файл"
         verbose_name_plural = "Файлы"
 
-    def get_absolute_url(self):  # new
+    def get_absolute_url(self):
         return reverse("file_detail", args=[str(self.id)])
 
     def __str__(self):
