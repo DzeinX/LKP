@@ -15,90 +15,68 @@
             {% endfor %}
         </ul>
         {% endif %}
-        <form id="form-edit-form" method="post">
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th style="min-width: 400px">
-                            Критерий
-                        </th>
-                        <th style="min-width: 400px">
-                            Значение
-                        </th>
-                        {% for category in categories %}
-                            {% if not  category.was_active %}
-                                <th {% if form.commentable %} colspan="2" {% endif %}>
-                                    {{ category.name }}
-                                </th>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                        {% csrf_token%}
-                
-                        {% for field in fields %}
-                            <tr>
-                                <td>{{ field.name }}</td>
-                                <td>{{ field.description }}</td>
-                                {% for category in categories %}
-                                    {% if category.was_active %}
-                                        <!-- если критерий содержит значения -->
-                                            {% for value in field.values %}
-                                                {% if value.category_id == category.id %}
-                                                    <!-- Если такое значение существует -->
-
-                                                    <td>
-                                                        {% if category.was_active %}
-                                                            <input type="hidden" name="value[{{ fieldIndex }}][id]" value="{{ value.id}}">
-                                                            <input type="hidden" name="value[{{ fieldIndex }}][field_id]" value="{{ value.field_id }}">
-                                                            <input type="hidden" name="value[{{ fieldIndex }}][category_id]" value="{{ category.id }}">
-                                                        {% endif %}
-                                                        <input {% if category.was_active %} name="value[{{ fieldIndex }}][value]" {% endif %} class="form-control w-auto"
-                                                            value="{{ value.value }}" placeholder="Значение"  {% if category.was_active %} readonly {% endif %}
-                                                            data-toggle="tooltip" data-placement="left" title="{{ field.name }}">
-                                                    </td>
-                                                    {% if form.commentable %}
-                                                        <td>
-                                                            <textarea rows="4" {% if category.was_active %}  name="value[{{ fieldIndex }}][comment]" {% endif %} class="form-control w-auto"
-                                                                      placeholder="Комментарий" {% if category.was_active %} readonly {%endif%} >{{ value.comment }}</textarea>
-                                                        </td>
-                                                    {% endif %}
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% endif %}
-                                        <!-- /если критерий содержит значения -->
-                                        <!-- если критерий не содержит значения -->
-                                        {% if valueExists %}
-                                            <!-- если такого значения не существует -->
-                                            <td>
-                                                <input type="hidden" name="value[{{ fieldIndex }}][field_id]" value="{{ field.id }}">
-                                                <input type="hidden" name="value[{{ fieldIndex }}][category_id]" value="{{ category.id }}">
-                                                <input name="value[{{ fieldIndex }}][value]" class="form-control w-auto"
-                                                       placeholder="Значение"  {% if category.was_active%} readonly {% endif %}
-                                                       data-toggle="tooltip" data-placement="left" title="{{ field.name }}">
-                                            </td>
-                                            {% if form.commentable %}
-                                                <td>
-                                                    <textarea rows="4" name="value[{{ fieldIndex }}][comment]" class="form-control w-auto"
-                                                              placeholder="Комментарий" {% if category.was_active%} readonly {% endif %}></textarea>
-                                                </td>
-                                            {% endif %}
-                                        {% endif %}
-                                    <!--  /если категории не предстоит быть активной -->
-                                {% endfor %}
-                                <!--  /для каждой категории -->
-                            </tr>
-                        {% endfor %}
-                </tbody>
-            </table>
-        </div>
-            <div class="text-right">
-                <button type="submit" class="btn btn-primary">
-                    Сохранить
-                </button>
+        <form method="POST" action="{% url "critery_category" form.id %}">
+            <div class="row">
+                <div class="col-4">
+                    <h4>Критерий</h4>
+                </div>
+                <div class="col">
+                   <h4>Значение</h4>
+                </div>
             </div>
+            {% if fields|length != 0 %}
+                {% for field in fields %}
+                    <div class="row mb-3">
+                        <div class="col-4">
+                           <p>{{field.name}}</p>
+                        </div>
+                        <div class="col">
+
+
+                                    <div class="col-5">
+                                        <div class="inspector-value-form"
+                                             data-userid="{{ user_lkp.id }}"
+                                             data-valueid="{{ category_value.value.id }}"
+                                             data-value="{{ category_value.value.value }}"
+                                             data-comment="{{ category_value.value.comment }}"
+                                             data-commentable="{{ form.commentable }}">
+                                            <form method="POST" action="{% url "critery_category" form.id  %}">
+                                                <div class="row">
+                                                    {% csrf_token %}
+
+                                                    <input type="hidden"
+                                                           value="{{ forloop.counter }}"
+                                                           name="form_id">
+
+                                                    <div class="col">
+                                                        <input type="text"
+                                                               value=""
+                                                               name="value-{{ index }}-{{ forloop.counter }}"
+                                                               class="form-control">
+                                                    </div>
+
+                                                    <input type="hidden"
+                                                           name="category_id-{{ forloop.counter }}"
+                                                           value="{{ category_va.category.id }}">
+                                                    <input type="hidden"
+                                                           name="user_id-{{ index }}"
+                                                           value="{{ user_lkp.id }}">
+                                                    <div class="col">
+                                                        <input type="submit"
+                                                               class="btn btn-primary mx-3"
+                                                               value="Сохранить"
+                                                               name="save_one">
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p><i>Показатели не найдены. Возможно, еще никто не заполнил данный критерий.</i></p>
+            {% endif %}
         </form>
     </div>
 {% endblock %}
