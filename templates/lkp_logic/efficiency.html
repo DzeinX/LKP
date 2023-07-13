@@ -18,10 +18,10 @@
                                     <a href="{% url 'criteria_category' form.id %}" class="card-link">Заполнить</a>
                                 {% endif %}
                                 {% if is_can_read %}
-                                    <a href="#" class="card-link">Просмотреть</a>
+                                    <a href="{% url 'criteria_category' form.id %}" class="card-link">Просмотреть</a>
                                 {% endif %}
                                 {% if is_can_check %}
-                                    <a href="{% url 'criteria' %}" class="card-link">Проверить</a>
+                                    <a href="{% url 'criteria' form.id %}" class="card-link">Проверить</a>
                                 {% endif %}
                             </div>
                         </div>

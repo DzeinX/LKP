@@ -30,6 +30,8 @@ class ValueAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     fields = [
         'name',
+        'start',
+        'end',
     ]
 
 

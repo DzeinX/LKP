@@ -1,8 +1,6 @@
 from datetime import datetime
+from transliterate import translit, get_available_language_codes
 import pandas as pd
-from io import StringIO
-import xlsxwriter
-import os
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 
@@ -71,81 +69,149 @@ def create(request):
         except Exception as e:
             messages.error(request, f'Данные не сохранены.Ошибка: {e}')
             return redirect('create')
+
         messages.success(request, f'Данные успешно сохранены')
         return redirect('create')
+
     messages.error(request, f'Не определён метод запроса')
     return redirect('create')
 
 
 @login_required(login_url='login_page')
-def criteria(request,_id):
+def criteria(request, _id):
     if request.method == "GET":
-        form = Forms.objects.get(id=_id)
-        fields = Fields.objects.filter(form_id = form.id).all()
+        form = Form.objects.get(id=_id)
+        fields = Field.objects.filter(form_id=form.id).all()
         form_categories = list(FormCategory.objects.filter(form_id=form.id).all())
-        categories =[]
+        categories = []
         for category in form_categories:
-            categories.append(Categories.objects.get(id =int(category.category_id)))
+            categories.append(Category.objects.get(id=int(category.category_id)))
         context = {'categories': categories,
-                   'fields':fields}
+                   'fields': fields}
         return render(request, 'lkp_logic/criteria.html', context)
-    if request.method =="POST":
+
+    if request.method == "POST":
         category_id = request.POST["category"]
-        category = Categories.objects.get(id=category_id)
-        values = Values.objects.filter(category_id=category.id).all()
-        data = {"ФИО": [],
-                "Должность": []}
-        for value in values:
-            field_id = value.field_id
-            field = Fields.objects.get(id=field_id)
-            data[f"{field.name}"] = []
-            data[f"{value.comment}"] = []
-        for user in User.objects.all():
-            data["ФИО"].append(user.full_name)
-            data["Должность"].append(user.department)
-            for value in values:
-                if value.user_id==user.id:
+        category = Category.objects.get(id=category_id)
+
+        file_name = f"Отчет по {str(category.name)} за {datetime.datetime.now().date()}.xlsx"
+
+        create_report_as_xlsx(form_id=_id,
+                              file_name=file_name)
+
+        with open('static/' + file_name, 'rb') as fh:
+            content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            response = HttpResponse(fh.read(),
+                                    content_type=content_type)
+            response['Content-Disposition'] = "inline; filename=" + translit(file_name,
+                                                                             language_code='ru',
+                                                                             reversed=True)
+        return response
+
+    messages.error(request, f'Не определён метод запроса')
+    return redirect('criteria', _id)
+
+
+def create_report_as_xlsx(form_id: int, file_name: str) -> None:
+    data = {
+        "ФИО": [],
+        "Должность": []
+    }
+
+    fields = Field.objects.filter(form_id=form_id).all()
+    for index, field in enumerate(fields):
+        data[f"{field.name}"] = []
+        data[f"Комментарий {index + 1}"] = []
+
+    for user in User.objects.all():
+        data["ФИО"].append(user.full_name if user.full_name is not None else user.username)
+        data["Должность"].append(user.department.name if user.department is not None else '')
+
+        index = 1
+        for field in fields:
+            value = Value.objects.filter(field_id=field.id, user_id=user.id).first()
+            if value is not None:
+                if value.user_id == user.id:
                     field_id = value.field_id
-                    field = Fields.objects.get(id=field_id)
-                    data[f"{field.name}"].append(value.value)
-                    data[f"{value.comment}"].append(value.comment)
-        df = pd.DataFrame(data)
-        df.to_excel(f"static/Отчет по {category} за {datetime.datetime.now().date()}.xlsx", index=False)
-        with open(f"static/Отчет по {category} за {datetime.datetime.now().date()}.xlsx", 'rb') as fh:
-            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(f"static/Отчет по {category} за {datetime.datetime.now().date()}.xlsx")
-            return response
-    messages.error(request, f'Не опредленный метод запроса')
-    return redirect('criteria',_id)
+                    field = Field.objects.get(id=field_id)
+                    data[f"{field.name}"].append(value.value if value.value is not None else 0)
+                    data[f"Комментарий {index}"].append(value.comment if value.comment is not None else '')
+                    index += 1
+            else:
+                data[f"{field.name}"].append(0)
+                data[f"Комментарий {index}"].append('')
+                index += 1
+
+    df = pd.DataFrame(data)
+
+    if '.' in file_name:
+        df.to_excel(f"static/{file_name}", index=False)
+    else:
+        df.to_excel(f"static/{file_name}.xlsx", index=False)
 
 
 @login_required
 def criteria_category(request, _id):
     if request.method == "GET":
-        form = Forms.objects.get(id = _id)
-        fields = Fields.objects.filter(form_id = form.id).all()
-        form_categories = list(FormCategory.objects.filter(form_id = form.id).all())
+        form = Form.objects.get(id=_id)
+        fields = Field.objects.filter(form_id=form.id).all()
+        form_categories = list(FormCategory.objects.filter(form_id=form.id).all())
+
+        field_value = []
+        for field in fields:
+            value = Value.objects.filter(field_id=field.id, user_id=request.user.id).first()
+            field_value.append([field, value])
+
         categories = []
         for category in form_categories:
-            categories.append(Categories.objects.get(id =int(category.category_id)))
+            categories.append(Category.objects.get(id=int(category.category_id)))
 
-        context = {'form':form,
-                   'fields':fields,
-                   'categories':categories,
-                   }
+        reporting_period = ReportingPeriod.objects.get(id=form.reporting_period_id)
+        form_position = FormPosition.objects.filter(position_id=request.user.position_id, form_id=form.id).first()
+        is_disabled = not (True if reporting_period.active and form_position is not None else False)
+
+        context = {
+            'form': form,
+            'field_value': field_value,
+            'categories': categories,
+            'is_disabled': is_disabled
+        }
         return render(request, 'lkp_logic/criteria_category.html', context)
+
     if request.method == "POST":
-        form_id = request.POST['form_id'].split('-')
+        form_id = request.POST['form_id']
+        user_value = request.POST[f'value-{form_id}']
+        field_id = request.POST[f'field_id-{form_id}']
+        field = Field.objects.get(id=field_id)
+        form = Form.objects.get(id=field.form_id)
+        category = form.get_current_category()
 
+        reporting_period = ReportingPeriod.objects.get(id=form.reporting_period_id)
+        if reporting_period.active:
+            try:
+                value = Value.objects.filter(field_id=field.id, user_id=request.user.id).first()
+                if value is None:
+                    value = Value(field_id=field.id,
+                                  user_id=request.user.id,
+                                  value=user_value,
+                                  lock=False,
+                                  visible=True,
+                                  category_id=category.id)
+                else:
+                    value.value = user_value
+                value.save()
+                messages.success(request, f'Данные успешно сохранены!')
+                return redirect('criteria_category', _id)
 
-        try:
-            messages.success(request, f'Успешно')
-            return redirect('criteria_category', _id)
-        except Exception as e:
-            messages.error(request, f'Не удалось сохранить данные. Ошибка: {e}')
-            return redirect('criteria_category', _id)
-    messages.error(request, f'Не опредленный метод запроса')
-    return redirect('criteria_category',_id)
+            except Exception as e:
+                messages.error(request, f'Не удалось сохранить данные. Ошибка: {e}')
+                return redirect('criteria_category', _id)
+
+        messages.error(request, f'Нельзя изменить данные в закрытой анкете')
+        return redirect('criteria_category', _id)
+
+    messages.error(request, f'Не определён метод запроса')
+    return redirect('criteria_category', _id)
 
 
 @login_required(login_url='login_page')
@@ -304,4 +370,3 @@ def show(request, _id):
 
     messages.error(request, 'Не определён метод запроса')
     return redirect('home')
-

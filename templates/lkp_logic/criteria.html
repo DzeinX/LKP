@@ -11,7 +11,7 @@
         <p>Критерии, доступные для проверки вам.</p>
 
         {% if fields.length != 0 %}
-            <form class="dropdown nav-item" method="post" action="{%url "critery" fields.0.form_id%}">
+            <form class="dropdown nav-item mb-3" method="post" action="{%url "criteria" fields.0.form_id%}">
                 {%csrf_token%}
                 <a  id="dropdownMenuLink" class="btn btn-primary dropdown-toggl" role="button"
                    data-bs-toggle="dropdown" aria-expanded="false">

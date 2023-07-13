@@ -84,7 +84,7 @@ class Category(models.Model):
 
     def was_active(self):
         date_now = datetime.datetime.now().date()
-        if self.start >= date_now >= self.end:
+        if self.start <= date_now <= self.end:
             return True
         else:
             return False
@@ -132,6 +132,14 @@ class Form(models.Model):
 
     def get_absolute_url(self):
         return reverse("form_details", args=[str(self.id)])
+
+    def get_current_category(self) -> Category or None:
+        form_categories = FormCategory.objects.filter(form_id=self.id).all()
+        for form_category in form_categories:
+            category = Category.objects.get(id=form_category.category_id)
+            if category.was_active():
+                return category
+        return None
 
     def __str__(self):
         return f'{self.name}'
