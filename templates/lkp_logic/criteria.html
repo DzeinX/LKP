@@ -1,5 +1,5 @@
 {% extends "Base_template.html" %}
-
+{%load static%}
 
 {% block title %}
     Отчет
@@ -11,22 +11,23 @@
         <p>Критерии, доступные для проверки вам.</p>
 
         {% if fields.length != 0 %}
-            <div class="dropdown nav-item">
-                <a id="dropdownMenuLink" class="btn btn-primary dropdown-toggl" href="#" role="button"
+            <form class="dropdown nav-item" method="post" action="{%url "critery" fields.0.form_id%}">
+                {%csrf_token%}
+                <a  id="dropdownMenuLink" class="btn btn-primary dropdown-toggl" role="button"
                    data-bs-toggle="dropdown" aria-expanded="false">
-
                     Отчет (.xlsx)
                 </a>
+
                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     {% for category in categories %}
                      <li>
-                        <a class="dropdown-item" href="#">
-                            {{ category.name }}
-                        </a>
+                         <input type ="hidden" name="category" value="{{category.id}}" >
+                        <input type="submit" class="dropdown-item" value="{{ category.name }}">
                       </li>
                     {% endfor %}
                  </ul>
-            </div>
+
+            </form>
 
             <div class="list-group">
                 {% for field in fields %}
