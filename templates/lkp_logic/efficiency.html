@@ -9,13 +9,16 @@
         <h1>Показатели эффективности</h1>
         {% if forms %}
             <div class="row">
-                {% for form, is_can_fill, is_can_check in forms %}
+                {% for form, is_can_fill, is_can_check, is_can_read in forms %}
                     <div class="col-lg-4">
                         <div class="card mb-4">
                             <div class="card-body">
                                 <h5 class="card-title">{{ form.name }}</h5>
                                 {% if is_can_fill %}
                                     <a href="{% url 'critery_category' form.id %}" class="card-link">Заполнить</a>
+                                {% endif %}
+                                {% if is_can_read %}
+                                    <a href="#" class="card-link">Просмотреть</a>
                                 {% endif %}
                                 {% if is_can_check %}
                                     <a href="{% url 'critery' %}" class="card-link">Проверить</a>
