@@ -13,16 +13,18 @@
                 <div class="card">
                     <div class="card-header">Панель управления</div>
 
+
+
                     <div class="card-body">
                         {% if messages %}
-                            <ul class="messages list-group">
+                            <ul class="messages list-group mb-3">
                                 {% for message in messages %}
                                     <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
                                 {% endfor %}
                             </ul>
                         {% endif %}
 
-                        {% if user.position_at_work|length == 0 %}
+                        {% if user.position_id == None %}
                             <div class="alert alert-warning">
                                 Перед заполнением показателей эффективности необходимо
                                 <a href="{% url "edit" %}">указать должность</a>.
@@ -33,7 +35,9 @@
                                 <a href="{% url "efficiency" %}" class="btn btn-primary d-block">Показатели эффективности</a>
                             </div>
                             <div class="col-lg-6">
-                                <a href="{% url "portfolio" %}" class="btn btn-primary d-block">Портфолио</a>
+
+                                <a href="{% url "portfolio" user.id %}" class="btn btn-primary d-block">Портфолио</a>
+
                             </div>
 
                         </div>

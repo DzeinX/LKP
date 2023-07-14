@@ -1,0 +1,43 @@
+{% extends "Base_template.html" %}
+{%load static%}
+
+{% block title %}
+    Отчет
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Критерии</h1>
+        <p>Критерии, доступные для проверки вам.</p>
+
+        {% if fields.length != 0 %}
+            <form class="dropdown nav-item mb-3" method="post" action="{%url "criteria" fields.0.form_id%}">
+                {%csrf_token%}
+                <a  id="dropdownMenuLink" class="btn btn-primary dropdown-toggl" role="button"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    Отчет (.xlsx)
+                </a>
+
+                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    {% for category in categories %}
+                     <li>
+                         <input type ="hidden" name="category" value="{{category.id}}" >
+                        <input type="submit" class="dropdown-item" value="{{ category.name }}">
+                      </li>
+                    {% endfor %}
+                 </ul>
+
+            </form>
+
+            <div class="list-group">
+                {% for field in fields %}
+                <a href="{% url 'show' field.id %}" class="list-group-item list-group-item-action">
+                    {{ field.name }}
+                </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p><i>Критерии не найдены.</i></p>
+        {% endif %}
+    </div>
+{% endblock %}

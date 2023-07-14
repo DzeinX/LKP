@@ -1,4 +1,6 @@
+
 {% extends "Base_template.html" %}
+
 
 {% block title %}
 
@@ -7,112 +9,160 @@
 {% block body %}
     <div class="container">
         <h1>Профиль</h1>
-        {% if user.position.id|length != None %}
-            <div class="alert alert-warning">
+        {% if messages %}
+            <ul class="messages list-group">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if user.position_id == None %}
+            <div class="alert alert-warning my-3">
                 Необходимо указать должность.
             </div>
         {% endif %}
-        <form method="post">
+
+        <form method="post" action="{% url 'edit' %}">
             {% csrf_token %}
 
             <div class="form-group row">
-                <label for="position_id" class="col-md-4 col-form-label text-md-right">Должность</label>
+                <label for="position_id"
+                       class="col-md-4 col-form-label text-md-right">Должность</label>
 
                 <div class="col-md-6">
-                    <select id="position_id" class="form-control @error('position_id') is-invalid @enderror" name="position_id" required autofocus>
-                        <option  {% if user.position_id == None  %} selected {% endif %} value>Укажите должность</option>
+
+                    <select id="position_id"
+                            class="form-control m-2"
+                            name="position_id"
+                            required
+                            autofocus>
+                        <option
+                                {% if user.position_id == None %}
+                                    selected
+                                {% endif %}
+                                    value>
+                            Укажите должность
+                        </option>
+
                         {% for position in positions %}
-                            <option {% if user.position_id == position.id %} selected {% endif %} value="{{ position.id }}">{{ position.name }}</option>
+                            <option
+                                    {% if user.position_id == position.id %}
+                                        selected
+                                    {% endif %}
+                                        value="{{ position.id }}">
+                                {{ position.name }}
+                            </option>
                         {% endfor %}
                     </select>
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ message }}</strong>
-                        </span>
-                    
                 </div>
             </div>
 
             <div class="form-group row">
-                <label for="departament_id" class="col-md-4 col-form-label text-md-right">Подразделение</label>
+                <label for="departament_id"
+                       class="col-md-4 col-form-label text-md-right">Подразделение</label>
 
                 <div class="col-md-6">
-                    <select id="departament_id" class="form-control @error('departament_id') is-invalid @enderror" name="departament_id" required autofocus>
-                        <option {% if user.departament_id == None %} selected {% endif %} value>Укажите подразделение</option>
-                        {% for department in departaments %}
-                            <option {% if user.departament_id == departmen.id %} selected {% endif %} data-level="{{ department.level }}" value="{{ department.id }}">{{ department.name }}</option>
+
+                    <select id="departament_id"
+                            class="form-control m-2"
+                            name="departament_id"
+                            required
+                            autofocus>
+                        <option
+                                {% if user.department_id == None %}
+                                    selected
+                                {% endif %}
+                                    value>
+                            Укажите подразделение
+                        </option>
+                        {% for department in departments %}
+                            <option
+                                    {% if user.department_id == department.id %}
+                                        selected
+                                    {% endif %}
+                                        data-level="{{ department.level }}"
+                                        value="{{ department.id }}">
+                                {{ department.name }}
+                            </option>
+
                         {% endfor %}
                     </select>
-                    {% if messages %} <!--('departament_id') -->
-                        <span class="invalid-feedback" role="alert">
-                            {% for message in messages %} 
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                            {% endfor %}
-                        </span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="orcid"
+                       class="col-md-4 col-form-label text-md-right">ORCID</label>
+                <div class="col-md-6">
+
+                    {% if user.orcid != None %}
+                        <input id="spin"
+                               class="form-control m-2" name="orcid" value="{{ user.orcid }}"
+                               placeholder="Напишите, если у вас есть">
+                    {% else %}
+                        <input id="spin"
+                               class="form-control m-2" name="orcid" placeholder="Напишите, если у вас есть">
+
                     {% endif %}
                 </div>
             </div>
 
             <div class="form-group row">
-                <label for="orcid" class="col-md-4 col-form-label text-md-right">ORCID</label>
+                <label for="wosrid"
+                       class="col-md-4 col-form-label text-md-right">WOS Researcher ID</label>
                 <div class="col-md-6">
-                    <input id="orcid" class="form-control " name="orcid" value="{{ user.orcid }}">
-                    {% if messages %} <!--@error('orcid') -->
-                        <span class="invalid-feedback" role="alert">
-                            {% for message in messages %} 
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                            {% endfor %}
-                        </span>
+
+                    {% if user.wosrid != None %}
+                        <input id="spin"
+                               class="form-control m-2" name="wosrid" value="{{ user.wosrid }}"
+                               placeholder="Напишите, если у вас есть">
+                    {% else %}
+                        <input id="spin"
+                               class="form-control m-2" name="wosrid" placeholder="Напишите, если у вас есть">
+
                     {% endif %}
                 </div>
             </div>
 
             <div class="form-group row">
-                <label for="wosrid" class="col-md-4 col-form-label text-md-right">WOS Researcher ID</label>
+                <label for="said"
+                       class="col-md-4 col-form-label text-md-right">Scopus Author ID</label>
                 <div class="col-md-6">
-                    <input id="wosrid" class="form-control " name="wosrid" value="{{ user.wosrid }}">
-                    {% if messages %} <!--@error('wosrid') -->
-                        <span class="invalid-feedback" role="alert">
-                            {% for message in messages %} 
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                            {% endfor %}
-                        </span>
+
+                    {% if user.said != None %}
+                        <input id="spin"
+                               class="form-control m-2" name="said" value="{{ user.said }}"
+                               placeholder="Напишите, если у вас есть">
+                    {% else %}
+                        <input id="spin"
+                               class="form-control m-2" name="said" placeholder="Напишите, если у вас есть">
+
                     {% endif %}
                 </div>
             </div>
 
             <div class="form-group row">
-                <label for="said" class="col-md-4 col-form-label text-md-right">Scopus Author ID</label>
+                <label for="spin"
+                       class="col-md-4 col-form-label text-md-right">SPIN</label>
                 <div class="col-md-6">
-                    <input id="said" class="form-control " name="said" value="{{ user.said }}">
-                    {% if messages %} <!--@error('said') -->
-                        <span class="invalid-feedback" role="alert">
-                            {% for message in messages %} 
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                            {% endfor %}
-                        </span>
-                    {% endif %}
-                </div>
-            </div>
 
-            <div class="form-group row">
-                <label for="spin" class="col-md-4 col-form-label text-md-right">SPIN</label>
-                <div class="col-md-6">
-                    <input id="spin" class="form-control" name="spin" value="{{ user.spin }}">
-                    {% if messages %}<!--@error('spin') -->
-                        <span class="invalid-feedback" role="alert">
-                            {% for message in messages %} 
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                            {% endfor %}
-                        </span>
+                    {% if user.spin != None %}
+                        <input id="spin"
+                               class="form-control m-2" name="spin" value="{{ user.spin }}"
+                               placeholder="Напишите, если у вас есть">
+                    {% else %}
+                        <input id="spin"
+                               class="form-control m-2" name="spin" placeholder="Напишите, если у вас есть">
+
                     {% endif %}
                 </div>
             </div>
 
             <div class="form-group row mb-0">
                 <div class="col-md-8 offset-md-4">
-                    <button type="submit" class="btn btn-primary">
-                        Сохранить
-                    </button>
+                    <input type="submit"
+                            class="btn btn-primary m-2" value="Сохранить">
                 </div>
             </div>
         </form>
@@ -124,6 +174,7 @@
         (() => {
             const positionSelect = document.getElementById('position_id');
             const departmentSelect = document.getElementById('departament_id');
+
             // если директор, показывать институты, иначе кафедры
             function onPositionChange() {
                 const selectedPosition = positionSelect.options[positionSelect.selectedIndex].value;
@@ -158,6 +209,7 @@
                     }
                 }
             }
+
             positionSelect.addEventListener('change', onPositionChange);
             onPositionChange();
         })()

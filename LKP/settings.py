@@ -143,7 +143,7 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Use new custom user model
-AUTH_USER_MODEL = 'auth_ldap.User'
+AUTH_USER_MODEL = 'application_OETD.User'
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'p-2 list-group-item list-group-item-secondary text-center',
@@ -152,3 +152,6 @@ MESSAGE_TAGS = {
     messages.WARNING: 'p-2 list-group-item list-group-item-warning text-center',
     messages.ERROR: 'p-2 list-group-item list-group-item-danger text-center',
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

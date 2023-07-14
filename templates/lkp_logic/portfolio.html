@@ -10,6 +10,7 @@
             {{ label }} <br />
             {% endfor %}
       
+
         </p>
 
         {% if messages %}
@@ -30,16 +31,21 @@
             <h2>{{ category.name }}</h2>
             <!-- @php $categoryFiles = $files->where('file_category_id', $category->id) @endphp -->
 
+
             {% if file_categories|length != 0 %}
+
                 <ol>
                 {% for file in files  %}
                     <li>
+
                         <a href="{% url 'show' %}">{{ file.name }}</a> 
                         {% if user.id == file.user_id %}
                             <form action="{% url 'file_delete'%}" method="post" class="d-inline">
                                 {% csrf_token %}
 
                                 <input type="submit" value = 'Удалить'class="btn btn-link text-danger p-0" style="margin-top: -2px;">
+
+                        
                             </form>
                         {% endif %}
                     </li>

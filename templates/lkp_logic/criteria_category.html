@@ -1,0 +1,111 @@
+{% extends "Base_template.html" %}
+
+{% block title %}
+    Категория
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{ form.name }}</h1>
+        {% if messages %}
+            <ul class="messages list-group">
+                {% for message in messages %}
+                    <li
+                            {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <form method="POST" action="{% url "criteria_category" form.id %}">
+            <div class="row">
+                <div class="col-4">
+                    <h4>Критерий</h4>
+                </div>
+                <div class="col">
+                    <h4>Значение</h4>
+                </div>
+            </div>
+            {% if field_value|length != 0 %}
+                {% for field, value in field_value %}
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            {{ field.name }}
+                        </div>
+                        <div class="col">
+                            <div class="col-5">
+                                <div class="inspector-value-form"
+                                     data-userid="{{ user_lkp.id }}"
+                                     data-valueid="{{ category_value.value.id }}"
+                                     data-value="{{ category_value.value.value }}"
+                                     data-comment="{{ category_value.value.comment }}"
+                                     data-commentable="{{ form.commentable }}">
+                                    <form method="POST" action="{% url "criteria_category" form.id %}">
+                                        <div class="row">
+                                            {% csrf_token %}
+                                            {% if not is_disabled %}
+                                                <input type="hidden"
+                                                       value="{{ forloop.counter }}"
+                                                       name="form_id">
+
+                                                <input type="hidden"
+                                                       value="{{ field.id }}"
+                                                       name="field_id-{{ forloop.counter }}">
+                                            {% endif %}
+
+                                            <div class="col">
+                                                <input type="text"
+                                                       {% if value is not None %}value="{{ value.value }}"{% endif %}
+                                                       name="value-{{ forloop.counter }}"
+                                                        placeholder="Значение не заполнено"
+                                                       class="form-control"
+                                                       {% if is_disabled %}disabled{% endif %}>
+                                            </div>
+
+                                            <div class="col-2">
+                                                {% if not is_disabled %}
+                                                    <input type="submit"
+                                                           class="btn btn-primary mx-3"
+                                                           value="Сохранить"
+                                                           name="save_one">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p><i>Критерии не найдены. Видимо они ещё не были добавлены.</i></p>
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            (document).ready(function () {
+                ('.table-responsive').doubleScroll();
+            });
+
+            /**
+             * При нажатии Enter вместо отправки данных срабатывает Tab
+             * @link https://www.geeksforgeeks.org/how-to-disable-form-submit-on-enter-button-using-jquery/
+             */
+            const inputs = ('#form-edit-form').find(":input:visible");
+            ('input').on("keypress", function (event) {
+                const keyPressed = event.keyCode || event.which;
+                if (keyPressed === 13) {
+                    const index = inputs.index(this);
+                    inputs.eq(index + 1).focus().select();
+                    return false;
+                }
+            });
+            // https://getbootstrap.com/docs/4.0/components/tooltips/
+            (function () {
+                ('[data-toggle="tooltip"]').tooltip()
+            })
+        });
+    </script>
+{% endblock %}
