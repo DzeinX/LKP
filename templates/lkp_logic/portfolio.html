@@ -1,16 +1,12 @@
 {% extends 'Base_template.html' %}
 
 {% block body %}
-
-
     <div class="container">
-        <h1>Портфолио : {{ user.full_name }}</h1>
+        <h1>Портфолио : {% if current_user.full_name is not None %}{{ current_user.full_name }}{% else %}{{ current_user.username }}{% endif %}</h1>
         <p>
             {% for label in labels %}
-            {{ label }} <br />
+                {{ label }} <br/>
             {% endfor %}
-      
-
         </p>
 
         {% if messages %}
@@ -21,39 +17,28 @@
             </ul>
         {% endif %}
 
-       
-
-        
-            <p><a href="{% url 'create' %}" class="btn btn-primary">Добавить</a></p> 
-        
-
-        {%for category in file_categories %}
-            <h2>{{ category.name }}</h2>
-            <!-- @php $categoryFiles = $files->where('file_category_id', $category->id) @endphp -->
-
-
-            {% if file_categories|length != 0 %}
-
-                <ol>
-                {% for file in files  %}
+        <p>
+            {% if user.id == file.user_id %}
+                <a href="{% url 'create' %}" class="btn btn-primary">Добавить</a>
+            {% endif %}
+        </p>
+        {% if files|length != 0 %}
+            <ul>
+                {% for file in files %}
                     <li>
-
-                        <a href="{% url 'show' %}">{{ file.name }}</a> 
+                        <a href="#">{{ file.name }}</a>
                         {% if user.id == file.user_id %}
-                            <form action="{% url 'file_delete'%}" method="post" class="d-inline">
+                            <form action="{% url 'file_delete' file.id file.user_id %}" method="post" class="d-inline">
                                 {% csrf_token %}
-
-                                <input type="submit" value = 'Удалить'class="btn btn-link text-danger p-0" style="margin-top: -2px;">
-
-                        
+                                <input type="submit" value='Удалить' class="btn btn-link text-danger p-0"
+                                       style="margin-top: -2px;">
                             </form>
                         {% endif %}
                     </li>
                 {% endfor %}
-                </ol>
-            {% else %}
-                <p>Файлы не найдены</p>
-            {% endif %}
-        {% endfor %}
+            </ul>
+        {% else %}
+            <p>Файлы не найдены</p>
+        {% endif %}
     </div>
 {% endblock %}

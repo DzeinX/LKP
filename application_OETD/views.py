@@ -1,5 +1,5 @@
 from datetime import datetime
-from transliterate import translit, get_available_language_codes
+from transliterate import translit
 import pandas as pd
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -8,7 +8,6 @@ from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect
 from .models import *
 from django.contrib import messages
-
 
 
 @login_required(login_url='login_page')
@@ -51,27 +50,26 @@ def create(request):
     if request.method == "POST":
         name = request.POST["name"]
         description = request.POST["description"]
-        date_now = datetime.now()
+        date_now = datetime.datetime.now()
         document = request.FILES["file"]
-        document_name = default_storage.save(f'{request.user.id}.{document.name.split(".")[1]}', document)
+        default_storage.save(f'{request.user.id}.{document.name.split(".")[1]}', document)
         file_category_id = request.POST["file_category_id"]
 
         try:
             file_category = FileCategory.objects.get(id=file_category_id)
-            user = User.objects.get(id=request.user.id)
-            File.objects.create(created_at=date_now,
-                                updated_at=date_now,
-                                path=document_name,
-                                name=name,
-                                description=description,
-                                file_category_id=file_category,
-                                user_id=user)
+            file = File.objects.create(created_at=date_now,
+                                       updated_at=date_now,
+                                       name=name,
+                                       description=description,
+                                       file_category_id=file_category.id,
+                                       user_id=request.user.id)
+            file.save()
         except Exception as e:
             messages.error(request, f'Данные не сохранены.Ошибка: {e}')
             return redirect('create')
 
         messages.success(request, f'Данные успешно сохранены')
-        return redirect('create')
+        return redirect('portfolio', request.user.id)
 
     messages.error(request, f'Не определён метод запроса')
     return redirect('create')
@@ -294,43 +292,40 @@ def efficiency(request):
     messages.error(request, 'Не определён метод запроса')
     return redirect('home')
 
+
 @login_required
-def portfolio(request,_id):
+def portfolio(request, _id):
     if request.method == "GET":
-        file_categories = FilesCatigories.objects.all()
-        files = Files.objects.filter(user_id =_id)
+        file_categories = FileCategory.objects.all()
+        files = File.objects.filter(user_id=_id)
+        user = User.objects.get(id=_id)
 
         context = {
-            'file_caregories' : file_categories,
-            'files' : files
+            'file_caregories': file_categories,
+            'files': files,
+            'current_user': user
         }
-    return render(request, 'lkp_logic/portfolio.html', context)
+        return render(request, 'lkp_logic/portfolio.html', context)
 
 
-
-@login_required (login_url='login_page')
-def report(request,_id):
+@login_required(login_url='login_page')
+def report(request, _id):
     if request.method == "GET":
-        categories = Categories.objects.all()
-        form = Forms.objects.get(id =_id)
-    context = {
-        "categories" : categories,
-        "form" : form
-    }
-    return render(request, 'lkp_logic/report.html', context)
+        categories = Category.objects.all()
+        form = Form.objects.get(id=_id)
+        context = {
+            "categories": categories,
+            "form": form
+        }
+        return render(request, 'lkp_logic/report.html', context)
+
 
 @login_required
-def file_delete(request, pk):
-    file = get_object_or_404(Files, pk=pk)
+def file_delete(request, _id, user_id):
+    file = get_object_or_404(File, pk=_id)
     if request.method == "POST":
         file.delete()
-    return redirect ('portfolio')     
-   
-
-
-
-
-
+    return redirect('portfolio', user_id)
 
 
 @login_required(login_url='login_page')
@@ -396,4 +391,3 @@ def show(request, _id):
 
     messages.error(request, 'Не определён метод запроса')
     return redirect('home')
-

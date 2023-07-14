@@ -21,7 +21,7 @@ urlpatterns = [
     path('report/<int:_id>', views.report, name='report'),
     path('show/<int:_id>', views.show, name='show'),
     path('edit-add', views.edit_add, name='edit-add'),
-    path('file_delete/<int:_id>', views.file_delete, name = 'file_delete' )
+    path('file_delete/<int:_id>/<int:user_id>', views.file_delete, name = 'file_delete' )
 
    
    
