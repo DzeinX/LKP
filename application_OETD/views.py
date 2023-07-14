@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-
+from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect
+from application_OETD.models import *
 
 @login_required(login_url='login_page')
 def main(request):
@@ -69,14 +70,28 @@ def efficiency(request):
 
 
 @login_required
-def portfolio(request):
-    context = {}
+def portfolio(request,_id):
+    if request.method == "GET":
+        file_categories = FilesCatigories.objects.all()
+        files = Files.objects.filter(user_id =_id)
+
+        context = {
+            'file_caregories' : file_categories,
+            'files' : files
+        }
     return render(request, 'lkp_logic/portfolio.html', context)
 
 
-@login_required
-def report(request):
-    context = {}
+
+@login_required (login_url='login_page')
+def report(request,_id):
+    if request.method == "GET":
+        categories = Categories.objects.all()
+        form = Forms.objects.get(id =_id)
+    context = {
+        "categories" : categories,
+        "form" : form
+    }
     return render(request, 'lkp_logic/report.html', context)
 
 
@@ -84,3 +99,11 @@ def report(request):
 def show(request):
     context = {}
     return render(request, 'lkp_logic/show.html', context)
+
+@login_required
+def file_delete(request, pk):
+    file = get_object_or_404(Files, pk=pk)
+    if request.method == "POST":
+        file.delete()
+    return redirect ('portfolio')     
+   

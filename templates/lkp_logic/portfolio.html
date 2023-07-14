@@ -1,44 +1,45 @@
-{% extends "app.html" %}
+{% extends 'Base_template.html' %}
 
-{% block content %}
+{% block body %}
+
+
     <div class="container">
-        <h1>Портфолио : {{ $user->name }}</h1>
+        <h1>Портфолио : {{ user.full_name }}</h1>
         <p>
-        {%for (attribute => label in ['orcid' => 'ORCID', 'wosrid' => 'WOS Researcher ID', 'said' => 'Scopus Author ID', 'spin' => 'SPIN']  )%}
-        {{ label }}: {{ user.attribute ?? 'не указано' }}.<br />
-        {% endfor %}
+            {% for label in labels %}
+            {{ label }} <br />
+            {% endfor %}
+      
         </p>
 
-        {% if session('success') %}
-            <div class="alert alert-success" role="alert">
-                {{ session('success') }}
-            </div>
+        {% if messages %}
+            <ul class="messages list-group">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
         {% endif %}
 
-        {% if session('error') %}
-            <div class="alert alert-danger" role="alert">
-                {{ session('error') }}
-            </div>
-        {% endif %}
+       
 
-        {% if ownProfile %}
-            <p><a href="#" class="btn btn-primary">Добавить</a></p> <!-- {{ route('files.create') }} -->
-        {% endif %}
+        
+            <p><a href="{% url 'create' %}" class="btn btn-primary">Добавить</a></p> 
+        
 
-        {%for category in fileCategories %}
+        {%for category in file_categories %}
             <h2>{{ category.name }}</h2>
             <!-- @php $categoryFiles = $files->where('file_category_id', $category->id) @endphp -->
 
-            {% if categoryFiles.isEmpty %}
+            {% if file_categories|length != 0 %}
                 <ol>
-                {% for file in categoryFiles  %}
+                {% for file in files  %}
                     <li>
-                        <a href="#">{{ file.name }}</a> <!-- {{ route('files.show', ['file' => $file->id]) }} -->
-                        {% if ownProfile %}
-                            <form method="post" action="{{ route('files.destroy', ['file' => $file->id]) }}" class="d-inline">
+                        <a href="{% url 'show' %}">{{ file.name }}</a> 
+                        {% if user.id == file.user_id %}
+                            <form action="{% url 'file_delete'%}" method="post" class="d-inline">
                                 {% csrf_token %}
-                                @method('delete') <!-- ?? -->
-                                <button class="btn btn-link text-danger p-0" style="margin-top: -2px;">&times;</button>
+
+                                <input type="submit" value = 'Удалить'class="btn btn-link text-danger p-0" style="margin-top: -2px;">
                             </form>
                         {% endif %}
                     </li>

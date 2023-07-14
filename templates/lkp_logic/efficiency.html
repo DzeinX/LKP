@@ -1,9 +1,11 @@
-{%extends "app.html" %}
+{%extends 'Base_template.html' %}
 
-{% block content %}
+{% block body %}
+
+
     <div class="container">
         <h1>Показатели эффективности</h1>
-        {% if forms isNotEmpty() %}
+        {% if forms|length != 0 %}
         <div class="row">
             {% for form in forms %}
                 <div class="col-lg-4">
@@ -14,11 +16,11 @@
                                 $formPositionsId = Arr::pluck($form->positions->toArray(), 'id');
                                 $usersForm = array_search(Auth::user()->position_id, $formPositionsId) !== false;    
                             @endphp -->
-                            {% if usersForm <!-- если должность пользователя и формы совпадает-->  %}                                     
-                                <a href="#" class="card-link">Заполнить</a> <!-- {{ route('forms.edit', ['form' => $form->id]) }} -->
+                            {% if usersForm %}        <!-- если должность пользователя и формы совпадает-->                             
+                                <a href="#" class="card-link">Заполнить</a> <!--  route('forms.edit', ['form' => $form->id])  -->
                             {% endif %}
-                            {% if Auth.user.can ('edit', someValue)%} <!-- если пользователь может редактировать значения -->
-                                <a href="#" class="card-link">Проверить</a> <!-- {{ route('fields.index', ['form' => $form->id]) }} -->
+                            {% if user.inspector_id %} <!-- если пользователь может редактировать значения -->
+                                <a href="#" class="card-link">Проверить</a> <!--  route('fields.index', ['form' => $form->id])  -->
                             {% endif %}
                         </div>
                     </div>

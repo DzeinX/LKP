@@ -16,7 +16,9 @@ urlpatterns = [
     path('edit', views.edit, name='edit'),
     path('edit_add', views.edit_add, name='edit_add'),
     path('efficiency', views.efficiency, name='efficiency'),
-    path('portfolio', views.portfolio, name='portfolio'),
-    path('report', views.report, name='report'),
-    path('show', views.show, name='show')
+    path('portfolio/<int:_id>', views.portfolio, name='portfolio'),
+    path('report/<int:_id>', views.report, name='report'),
+    path('show', views.show, name='show'),
+    path('edit-add', views.edit_add, name='edit-add'),
+    path('file_delete/<int:_id>', views.file_delete, name = 'file_delete' )
 ]
