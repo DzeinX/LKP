@@ -3,27 +3,18 @@ from django.views.generic import RedirectView
 
 from . import views
 
-
 urlpatterns = [
     path('', RedirectView.as_view(url='home')),
-    path('main', views.main, name='main'),
     path('home', views.home, name='home'),
-    path('base_template', views.base_template, name='base_template'),
-    path('app', views.app, name='app'),
-    path('login_page', views.login_page, name='login_page'),
-    path('create', views.create, name='create'),
-    path('criteria/<int:_id>', views.criteria, name='criteria'),
-    path('criteria_category/<int:_id>', views.criteria_category, name='criteria_category'),
-    path('edit', views.edit, name='edit'),
+    path('create_file', views.create_file, name='create_file'),
+    path('checking_questionnaire/<int:_id>', views.checking_questionnaire, name='checking_questionnaire'),
+    path('filling_questionnaire/<int:_id>', views.filling_questionnaire, name='filling_questionnaire'),
+    path('edit_profile', views.edit_profile, name='edit_profile'),
     path('edit_add', views.edit_add, name='edit_add'),
-    path('efficiency', views.efficiency, name='efficiency'),
+    path('questionnaire', views.questionnaire, name='questionnaire'),
     path('portfolio/<int:_id>', views.portfolio, name='portfolio'),
     path('report/<int:_id>', views.report, name='report'),
-    path('show/<int:_id>', views.show, name='show'),
-    path('edit-add', views.edit_add, name='edit-add'),
-    path('file_delete/<int:_id>/<int:user_id>', views.file_delete, name = 'file_delete' )
-
-   
-   
+    path('category_for_checking/<int:_id>', views.category_for_checking, name='category_for_checking'),
+    path('file_delete/<int:_id>/<int:user_id>', views.file_delete, name='file_delete')
 
 ]

@@ -18,8 +18,8 @@
         {% endif %}
 
         <p>
-            {% if user.id == file.user_id %}
-                <a href="{% url 'create' %}" class="btn btn-primary">Добавить</a>
+            {% if user.id == current_user.id %}
+                <a href="{% url 'create_file' %}" class="btn btn-primary my-3">Добавить файл</a>
             {% endif %}
         </p>
         {% if files|length != 0 %}
@@ -27,11 +27,10 @@
                 {% for file in files %}
                     <li>
                         <a href="#">{{ file.name }}</a>
-                        {% if user.id == file.user_id %}
+                        {% if user.id == current_user.id %}
                             <form action="{% url 'file_delete' file.id file.user_id %}" method="post" class="d-inline">
                                 {% csrf_token %}
-                                <input type="submit" value='Удалить' class="btn btn-link text-danger p-0"
-                                       style="margin-top: -2px;">
+                                <input type="submit" value='Удалить' class="btn btn-link text-danger p-0">
                             </form>
                         {% endif %}
                     </li>

@@ -15,7 +15,7 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        <form method="POST" action="{% url "criteria_category" form.id %}">
+        <form method="POST" action="{% url "filling_questionnaire" form.id %}">
             <div class="row">
                 <div class="col-4">
                     <h4>Критерий</h4>
@@ -38,7 +38,7 @@
                                      data-value="{{ category_value.value.value }}"
                                      data-comment="{{ category_value.value.comment }}"
                                      data-commentable="{{ form.commentable }}">
-                                    <form method="POST" action="{% url "criteria_category" form.id %}">
+                                    <form method="POST" action="{% url "filling_questionnaire" form.id %}">
                                         <div class="row">
                                             {% csrf_token %}
                                             {% if not is_disabled %}

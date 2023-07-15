@@ -27,12 +27,12 @@
                         {% if user.position_id == None %}
                             <div class="alert alert-warning">
                                 Перед заполнением показателей эффективности необходимо
-                                <a href="{% url "edit" %}">указать должность</a>.
+                                <a href="{% url "edit_profile" %}">указать должность</a>.
                             </div>
                         {% endif %}
                         <div class="row">
                             <div class="col-lg-6">
-                                <a href="{% url "efficiency" %}" class="btn btn-primary d-block">Показатели эффективности</a>
+                                <a href="{% url "questionnaire" %}" class="btn btn-primary d-block">Показатели эффективности</a>
                             </div>
                             <div class="col-lg-6">
 

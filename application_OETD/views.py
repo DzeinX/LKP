@@ -11,41 +11,17 @@ from django.contrib import messages
 
 
 @login_required(login_url='login_page')
-def main(request):
-    context = {}
-    return render(request, 'lkp_logic/main.html', context)
-
-
-@login_required(login_url='login_page')
 def home(request):
     context = {}
     return render(request, 'home.html', context)
 
 
 @login_required(login_url='login_page')
-def base_template(request):
-    context = {}
-    return render(request, 'Base_template.html', context)
-
-
-@login_required(login_url='login_page')
-def app(request):
-    context = {}
-    return render(request, 'app.html', context)
-
-
-@login_required(login_url='login_page')
-def login_page(request):
-    context = {}
-    return render(request, 'registration/login_page.html', context)
-
-
-@login_required(login_url='login_page')
-def create(request):
+def create_file(request):
     if request.method == "GET":
         categories = FileCategory.objects.all()
         context = {'categories': categories}
-        return render(request, 'lkp_logic/create.html', context)
+        return render(request, 'lkp_logic/create_file.html', context)
 
     if request.method == "POST":
         name = request.POST["name"]
@@ -66,27 +42,34 @@ def create(request):
             file.save()
         except Exception as e:
             messages.error(request, f'Данные не сохранены.Ошибка: {e}')
-            return redirect('create')
+            return redirect('create_file')
 
         messages.success(request, f'Данные успешно сохранены')
         return redirect('portfolio', request.user.id)
 
     messages.error(request, f'Не определён метод запроса')
-    return redirect('create')
+    return redirect('create_file')
 
 
 @login_required(login_url='login_page')
-def criteria(request, _id):
+def checking_questionnaire(request, _id):
     if request.method == "GET":
         form = Form.objects.get(id=_id)
-        fields = Field.objects.filter(form_id=form.id).all()
-        form_categories = list(FormCategory.objects.filter(form_id=form.id).all())
-        categories = []
-        for category in form_categories:
-            categories.append(Category.objects.get(id=int(category.category_id)))
-        context = {'categories': categories,
-                   'fields': fields}
-        return render(request, 'lkp_logic/criteria.html', context)
+
+        is_can_check = is_user_can_check_questionnaire(form, request.user)
+        access = is_user_has_access(form, request.user)
+        if is_can_check and access:
+            fields = Field.objects.filter(form_id=form.id).all()
+            form_categories = list(FormCategory.objects.filter(form_id=form.id).all())
+            categories = []
+            for category in form_categories:
+                categories.append(Category.objects.get(id=int(category.category_id)))
+            context = {'categories': categories,
+                       'fields': fields}
+            return render(request, 'lkp_logic/checking_questionnaire.html', context)
+
+        messages.error(request, f'У вас нет доступа к этой анкете')
+        return redirect('home')
 
     if request.method == "POST":
         category_id = request.POST["category"]
@@ -107,7 +90,7 @@ def criteria(request, _id):
         return response
 
     messages.error(request, f'Не определён метод запроса')
-    return redirect('criteria', _id)
+    return redirect('checking_questionnaire', _id)
 
 
 def create_report_as_xlsx(form_id: int, file_name: str) -> None:
@@ -148,33 +131,30 @@ def create_report_as_xlsx(form_id: int, file_name: str) -> None:
         df.to_excel(f"static/{file_name}.xlsx", index=False)
 
 
-@login_required
-def criteria_category(request, _id):
+@login_required(login_url='login_page')
+def filling_questionnaire(request, _id):
     if request.method == "GET":
         form = Form.objects.get(id=_id)
-        fields = Field.objects.filter(form_id=form.id).all()
-        form_categories = list(FormCategory.objects.filter(form_id=form.id).all())
 
-        field_value = []
-        for field in fields:
-            value = Value.objects.filter(field_id=field.id, user_id=request.user.id).first()
-            field_value.append([field, value])
+        if is_user_has_access(form, request.user):
+            fields = Field.objects.filter(form_id=form.id).all()
 
-        categories = []
-        for category in form_categories:
-            categories.append(Category.objects.get(id=int(category.category_id)))
+            field_value = []
+            for field in fields:
+                value = Value.objects.filter(field_id=field.id, user_id=request.user.id).first()
+                field_value.append([field, value])
 
-        reporting_period = ReportingPeriod.objects.get(id=form.reporting_period_id)
-        form_position = FormPosition.objects.filter(position_id=request.user.position_id, form_id=form.id).first()
-        is_disabled = not (True if reporting_period.active and form_position is not None else False)
+            is_disabled = is_user_can_read_questionnaire(form, request.user)
 
-        context = {
-            'form': form,
-            'field_value': field_value,
-            'categories': categories,
-            'is_disabled': is_disabled
-        }
-        return render(request, 'lkp_logic/criteria_category.html', context)
+            context = {
+                'form': form,
+                'field_value': field_value,
+                'is_disabled': is_disabled
+            }
+            return render(request, 'lkp_logic/filling_questionnaire.html', context)
+
+        messages.error(request, f'У вас нет доступа к этой анкете')
+        return redirect('home')
 
     if request.method == "POST":
         form_id = request.POST['form_id']
@@ -182,10 +162,9 @@ def criteria_category(request, _id):
         field_id = request.POST[f'field_id-{form_id}']
         field = Field.objects.get(id=field_id)
         form = Form.objects.get(id=field.form_id)
-        category = form.get_current_category()
+        category = form.get_current_filling_period()
 
-        reporting_period = ReportingPeriod.objects.get(id=form.reporting_period_id)
-        if reporting_period.active:
+        if category.is_can_filling():
             try:
                 value = Value.objects.filter(field_id=field.id, user_id=request.user.id).first()
                 if value is None:
@@ -199,21 +178,21 @@ def criteria_category(request, _id):
                     value.value = user_value
                 value.save()
                 messages.success(request, f'Данные успешно сохранены!')
-                return redirect('criteria_category', _id)
+                return redirect('filling_questionnaire', _id)
 
             except Exception as e:
                 messages.error(request, f'Не удалось сохранить данные. Ошибка: {e}')
-                return redirect('criteria_category', _id)
+                return redirect('filling_questionnaire', _id)
 
         messages.error(request, f'Нельзя изменить данные в закрытой анкете')
-        return redirect('criteria_category', _id)
+        return redirect('filling_questionnaire', _id)
 
     messages.error(request, f'Не определён метод запроса')
-    return redirect('criteria_category', _id)
+    return redirect('filling_questionnaire', _id)
 
 
 @login_required(login_url='login_page')
-def edit(request):
+def edit_profile(request):
     if request.method == "GET":
         positions = Position.objects.all()
         departments = Department.objects.all()
@@ -221,7 +200,7 @@ def edit(request):
             'positions': positions,
             'departments': departments
         }
-        return render(request, 'lkp_logic/edit.html', context)
+        return render(request, 'lkp_logic/edit_profile.html', context)
 
     if request.method == "POST":
         position_id = request.POST['position_id']
@@ -245,10 +224,10 @@ def edit(request):
             request.user.save()
         except Exception as e:
             messages.error(request, f'Не удалось сохранить данные. Ошибка: {e}')
-            return redirect('edit')
+            return redirect('edit_profile')
 
         messages.success(request, 'Данные успешно сохранены!')
-        return redirect('edit')
+        return redirect('edit_profile')
 
     messages.error(request, 'Не определён метод запроса')
     return redirect('home')
@@ -261,47 +240,75 @@ def edit_add(request):
 
 
 @login_required(login_url='login_page')
-def efficiency(request):
+def questionnaire(request):
     if request.method == "GET":
         forms = Form.objects.all()
 
         access_forms = []
         for form in forms:
-            fields = Field.objects.filter(form_id=form.id).all()
-            reporting_period = ReportingPeriod.objects.get(id=form.reporting_period_id)
-            form_position = FormPosition.objects.filter(position_id=request.user.position_id, form_id=form.id).first()
-            inspector_id = request.user.inspector_id
+            is_can_fill = is_user_can_fill_questionnaire(form, request.user)
+            is_can_check = is_user_can_check_questionnaire(form, request.user)
+            is_can_read = is_user_can_read_questionnaire(form, request.user)
 
-            access = []
-            if inspector_id is not None:
-                access = [field if field.inspector_id == inspector_id else None for field in fields]
-
-            is_can_fill = True if reporting_period.active and form_position is not None else False
-            is_can_check = True if len(access) != access.count(None) else False
-            is_can_read = not is_can_fill
-
-            access_forms.append([form, is_can_fill, is_can_check, is_can_read])
-
-            # access_forms -> [[форма, может_заполнить, может_проверить, может_просмотреть], [...], ...]
+            if is_user_has_access(form, request.user):
+                access_forms.append([form, is_can_fill, is_can_check, is_can_read])
+                # access_forms -> [[форма, может_заполнить, может_проверить, может_просмотреть], [...], ...]
 
         context = {
             'forms': access_forms
         }
-        return render(request, 'lkp_logic/efficiency.html', context)
+        return render(request, 'lkp_logic/questionnaire.html', context)
 
     messages.error(request, 'Не определён метод запроса')
     return redirect('home')
 
 
-@login_required
+def is_user_has_access(form: Form, user: User) -> bool:
+    form_position = FormPosition.objects.filter(position_id=user.position_id, form_id=form.id).first()
+    fields = Field.objects.filter(form_id=form.id).all()
+    access = []
+    if user.inspector_id is not None:
+        access = [field if field.inspector_id == user.inspector_id else None for field in fields]
+    return True if form_position is not None or len(access) != access.count(None) else False
+
+
+def is_user_can_fill_questionnaire(form: Form, user: User) -> bool:
+    category_filling_period = form.get_current_filling_period()
+    form_position = FormPosition.objects.filter(position_id=user.position_id, form_id=form.id).first()
+
+    is_can_fill = False
+    if category_filling_period is not None:
+        is_can_fill = True if category_filling_period.is_can_filling() and form_position is not None else False
+
+    return is_can_fill
+
+
+def is_user_can_check_questionnaire(form: Form, user: User) -> bool:
+    category_checking_period = form.get_current_checking_period()
+    fields = Field.objects.filter(form_id=form.id).all()
+    access = []
+    if user.inspector_id is not None:
+        access = [field if field.inspector_id == user.inspector_id else None for field in fields]
+
+    is_can_check = False
+    if category_checking_period is not None:
+        is_can_check = True if category_checking_period.is_can_checking() and len(access) != access.count(
+            None) else False
+
+    return is_can_check
+
+
+def is_user_can_read_questionnaire(form: Form, user: User) -> bool:
+    return not is_user_can_fill_questionnaire(form, user)
+
+
+@login_required(login_url='login_page')
 def portfolio(request, _id):
     if request.method == "GET":
-        file_categories = FileCategory.objects.all()
         files = File.objects.filter(user_id=_id)
         user = User.objects.get(id=_id)
 
         context = {
-            'file_caregories': file_categories,
             'files': files,
             'current_user': user
         }
@@ -320,7 +327,7 @@ def report(request, _id):
         return render(request, 'lkp_logic/report.html', context)
 
 
-@login_required
+@login_required(login_url='login_page')
 def file_delete(request, _id, user_id):
     file = get_object_or_404(File, pk=_id)
     if request.method == "POST":
@@ -329,13 +336,13 @@ def file_delete(request, _id, user_id):
 
 
 @login_required(login_url='login_page')
-def show(request, _id):
+def category_for_checking(request, _id):
     if request.method == "GET":
         field = Field.objects.get(id=_id)
 
         if field.inspector_id == request.user.inspector_id:
             users = User.objects.all()
-            form = Form.objects.get(id=field.id)
+            form = Form.objects.get(id=field.form_id)
 
             access_users = []
             for index, user in enumerate(users):
@@ -358,7 +365,7 @@ def show(request, _id):
                 "users": access_users,
                 "form": form
             }
-            return render(request, 'lkp_logic/show.html', context)
+            return render(request, 'lkp_logic/category_for_checking.html', context)
 
         messages.error(request, 'У вас нет доступа к этому критерию')
         return redirect('home')
@@ -380,14 +387,14 @@ def show(request, _id):
                 user_answer.save()
             else:
                 messages.error(request, f'Значение введено некорректно')
-                return redirect('show', _id)
+                return redirect('category_for_checking', _id)
 
         except Exception as e:
             messages.error(request, f'Не удалось сохранить данные. Ошибка: {e}')
-            return redirect('show', _id)
+            return redirect('category_for_checking', _id)
 
         messages.success(request, 'Данные успешно сохранены!')
-        return redirect('show', _id)
+        return redirect('category_for_checking', _id)
 
     messages.error(request, 'Не определён метод запроса')
     return redirect('home')

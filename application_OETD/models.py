@@ -16,18 +16,6 @@ class Position(models.Model):
         verbose_name_plural = "Должности"
 
 
-# TODO: Сомневаюсь, что эта модель нам нужна, возможно удалим
-class Permission(models.Model):
-    key = models.CharField('Значение', max_length=250)
-    table_name = models.CharField('Название таблицы', max_length=250, null=True)
-
-    created_at = models.DateTimeField('Время создание ', null=True, blank=True)
-    updated_at = models.DateTimeField('Время изменения', null=True, blank=True)
-
-    def __str__(self):
-        return f'{self.table_name}'
-
-
 class Department(models.Model):
     name = models.CharField('Наименование', max_length=250)
     level = models.IntegerField('Уровень', validators=[MinValueValidator(1), MaxValueValidator(100)])
@@ -40,40 +28,29 @@ class Department(models.Model):
         return f'{self.name}'
 
 
-# TODO: Сомневаюсь, что эта модель нам нужна, возможно удалим
-class Menu(models.Model):
-    created_at = models.DateTimeField('Время создание ', null=True, blank=True)
-    updated_at = models.DateTimeField('Время изменения', null=True, blank=True)
+class ReportingPeriod(models.Model):
     name = models.CharField('Наименование', max_length=250)
+    start = models.DateField('Начало периода')
+    end = models.DateField('Конец периода')
+
+    class Meta:
+        verbose_name = "Отчётный период"
+        verbose_name_plural = "Отчётные периоды"
+
+    def is_active(self):
+        date_now = datetime.datetime.now().date()
+        return True if self.start <= date_now <= self.end else False
 
     def __str__(self):
         return f'{self.name}'
 
 
-# TODO: Сомневаюсь, что эта модель нам нужна, возможно удалим
-class MenuItem(models.Model):
-    title = models.CharField('Заголовок', max_length=250)
-    url = models.CharField('urls', max_length=250)
-    target = models.CharField('Цель', max_length=250)
-    icon_class = models.CharField('Класс иконки', max_length=250, null=True)
-    color = models.CharField('Цвет', max_length=250, null=True)
-    parent_id = models.IntegerField('Родительский id', validators=[MinValueValidator(1), MaxValueValidator(100)], null=True)
-    order = models.IntegerField('order', validators=[MinValueValidator(1), MaxValueValidator(100)])
-    route = models.CharField('Route', max_length=250, null=True)
-    parameters = models.TextField('Параметры', null=True)
-    created_at = models.DateTimeField('Время создание ', null=True, blank=True)
-    updated_at = models.DateTimeField('Время изменения', null=True, blank=True)
-
-    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.title}'
-
-
 class Category(models.Model):
     name = models.CharField('Наименование', max_length=250)
-    start = models.DateField('Начало активности')
-    end = models.DateField('Конец активности')
+    start_filling = models.DateField('Начало заполнения')
+    end_filling = models.DateField('Конец заполнения')
+    start_checking = models.DateField('Начало проверки')
+    end_checking = models.DateField('Конец проверки')
 
     class Meta:
         verbose_name = "Категория"
@@ -82,26 +59,13 @@ class Category(models.Model):
     def get_absolute_url(self):
         return reverse("category_detail", args=[str(self.id)])
 
-    def was_active(self):
+    def is_can_filling(self) -> bool:
         date_now = datetime.datetime.now().date()
-        if self.start <= date_now <= self.end:
-            return True
-        else:
-            return False
+        return True if self.start_filling <= date_now <= self.end_filling else False
 
-    def __str__(self):
-        return f'{self.name}'
-
-
-class ReportingPeriod(models.Model):
-    name = models.CharField('Наименование', max_length=250)
-    active = models.BooleanField('Активная', default=True)
-    created_at = models.DateTimeField('Время создание ', null=True, blank=True)
-    updated_at = models.DateTimeField('Время изменения', null=True, blank=True)
-
-    class Meta:
-        verbose_name = "Отчётный период"
-        verbose_name_plural = "Отчётные периоды"
+    def is_can_checking(self) -> bool:
+        date_now = datetime.datetime.now().date()
+        return True if self.start_checking <= date_now <= self.end_checking else False
 
     def __str__(self):
         return f'{self.name}'
@@ -127,17 +91,25 @@ class Form(models.Model):
     reporting_period = models.ForeignKey(ReportingPeriod, on_delete=models.SET_NULL, null=True)
 
     class Meta:
-        verbose_name = "Показатель эффективности"
-        verbose_name_plural = "Показатели эффективности"
+        verbose_name = "Анкета"
+        verbose_name_plural = "Анкеты"
 
     def get_absolute_url(self):
         return reverse("form_details", args=[str(self.id)])
 
-    def get_current_category(self) -> Category or None:
+    def get_current_filling_period(self) -> Category or None:
         form_categories = FormCategory.objects.filter(form_id=self.id).all()
         for form_category in form_categories:
             category = Category.objects.get(id=form_category.category_id)
-            if category.was_active():
+            if category.is_can_filling():
+                return category
+        return None
+
+    def get_current_checking_period(self) -> Category or None:
+        form_categories = FormCategory.objects.filter(form_id=self.id).all()
+        for form_category in form_categories:
+            category = Category.objects.get(id=form_category.category_id)
+            if category.is_can_checking():
                 return category
         return None
 
@@ -156,8 +128,8 @@ class Field(models.Model):
     inspector = models.ForeignKey(Inspector, on_delete=models.SET_NULL, null=True)
 
     class Meta:
-        verbose_name = "Поле показателя эффективности"
-        verbose_name_plural = "Поля показателей эффективности"
+        verbose_name = "Поле анкеты"
+        verbose_name_plural = "Поля анкет"
 
     def get_absolute_url(self):
         return reverse("field_detail", args=[str(self.id)])
@@ -180,15 +152,6 @@ class Role(models.Model):
         return f'{self.display_name}'
 
 
-# TODO: Сомневаюсь, что эта модель нам нужна, возможно удалим
-class PermissionRole(models.Model):
-    permission = models.ForeignKey(Permission, on_delete=models.CASCADE)
-    role = models.ForeignKey(Role, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.permission.table_name} & {self.role.name}'
-
-
 class FileCategory(models.Model):
     name = models.CharField('Наименование', max_length=250)
 
@@ -205,8 +168,8 @@ class FormCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = "Показатель эффективности & Категория"
-        verbose_name_plural = "Показатели эффективности & Категории"
+        verbose_name = "Анкета & Категория"
+        verbose_name_plural = "Анкеты & Категории"
 
     def __str__(self):
         return f'{self.form.name} & {self.category.name}'
@@ -217,8 +180,8 @@ class FormPosition(models.Model):
     form = models.ForeignKey(Form, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = "Показатель эффективности & Должность"
-        verbose_name_plural = "Показатели эффективности & Должности"
+        verbose_name = "Анкета & Должность"
+        verbose_name_plural = "Анкеты & Должности"
 
     def __str__(self):
         return f'{self.form.name} & {self.position.name}'
@@ -229,25 +192,11 @@ class FormReportingPeriod(models.Model):
     form = models.ForeignKey(Form, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = "Показатель эффективности & Отчётный период"
-        verbose_name_plural = "Показатели эффективности & Отчётные периоды"
+        verbose_name = "Анкета & Отчётный период"
+        verbose_name_plural = "Анкеты & Отчётные периоды"
 
     def __str__(self):
         return f'{self.form.name} & {self.reporting_period.name}'
-
-
-# TODO: Сомневаюсь, что эта модель нам нужна, возможно удалим
-class Translation(models.Model):
-    created_at = models.DateTimeField('Время создание ', null=True, blank=True)
-    updated_at = models.DateTimeField('Время изменения', null=True, blank=True)
-    table_name = models.CharField("Название", max_length=250)
-    column_name = models.CharField("Название столбцов ", max_length=250)
-    foreign_key = models.IntegerField('Связь', validators=[MinValueValidator(1), MaxValueValidator(100)])
-    locale = models.CharField('Локация', max_length=250)
-    value = models.TextField('Значение')
-
-    def __str__(self):
-        return f'{self.table_name}'
 
 
 class User(AbstractUser):

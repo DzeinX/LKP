@@ -1,14 +1,11 @@
 from django.contrib import admin
 from .models import *
-admin.site.register(Permission)
+
+
 admin.site.register(Department)
-admin.site.register(PermissionRole)
 admin.site.register(Position)
-admin.site.register(MenuItem)
 admin.site.register(FileCategory)
 admin.site.register(Inspector)
-admin.site.register(Translation)
-admin.site.register(Menu)
 
 
 @admin.register(Value)
@@ -30,8 +27,10 @@ class ValueAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     fields = [
         'name',
-        'start',
-        'end',
+        'start_filling',
+        'end_filling',
+        'start_checking',
+        'end_checking',
     ]
 
 
@@ -39,7 +38,8 @@ class CategoryAdmin(admin.ModelAdmin):
 class ReportingPeriodAdmin(admin.ModelAdmin):
     fields = [
         'name',
-        'active',
+        'start',
+        'end',
     ]
 
 

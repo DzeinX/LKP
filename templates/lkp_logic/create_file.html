@@ -17,7 +17,7 @@
             {% endfor %}
         </ul>
         {% endif %}
-        <form method="post"  enctype="multipart/form-data">
+        <form method="post" action="{% url 'create_file' %}"  enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group row">
                 <label for="name" class="col-md-4 col-form-label text-md-right">Название</label>
