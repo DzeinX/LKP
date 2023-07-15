@@ -15,6 +15,11 @@
                 {% endfor %}
             </ul>
         {% endif %}
+        {% if is_disabled %}
+            <a href="{% url 'result_questionnaire' form.id%}" class="btn btn-success my-3">
+                Сохранить результаты анкетирования
+            </a>
+        {% endif %}
         <form method="POST" action="{% url "filling_questionnaire" form.id %}">
             <div class="row">
                 <div class="col-4">

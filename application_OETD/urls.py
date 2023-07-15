@@ -15,6 +15,6 @@ urlpatterns = [
     path('portfolio/<int:_id>', views.portfolio, name='portfolio'),
     path('report/<int:_id>', views.report, name='report'),
     path('category_for_checking/<int:_id>', views.category_for_checking, name='category_for_checking'),
-    path('file_delete/<int:_id>/<int:user_id>', views.file_delete, name='file_delete')
-
+    path('file_delete/<int:_id>/<int:user_id>', views.file_delete, name='file_delete'),
+    path('result_questionnaire/<int:_id>', views.result_questionnaire, name='result_questionnaire')
 ]

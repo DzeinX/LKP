@@ -105,23 +105,24 @@ def create_report_as_xlsx(form_id: int, file_name: str) -> None:
         data[f"Комментарий {index + 1}"] = []
 
     for user in User.objects.all():
-        data["ФИО"].append(user.full_name if user.full_name is not None else user.username)
-        data["Должность"].append(user.department.name if user.department is not None else '')
+        if user.is_active:
+            data["ФИО"].append(user.full_name if user.full_name is not None else user.username)
+            data["Должность"].append(user.department.name if user.department is not None else '')
 
-        index = 1
-        for field in fields:
-            value = Value.objects.filter(field_id=field.id, user_id=user.id).first()
-            if value is not None:
-                if value.user_id == user.id:
-                    field_id = value.field_id
-                    field = Field.objects.get(id=field_id)
-                    data[f"{field.name}"].append(value.value if value.value is not None else 0)
-                    data[f"Комментарий {index}"].append(value.comment if value.comment is not None else '')
+            index = 1
+            for field in fields:
+                value = Value.objects.filter(field_id=field.id, user_id=user.id).first()
+                if value is not None:
+                    if value.user_id == user.id:
+                        field_id = value.field_id
+                        field = Field.objects.get(id=field_id)
+                        data[f"{field.name}"].append(value.value if value.value is not None else 0)
+                        data[f"Комментарий {index}"].append(value.comment if value.comment is not None else '')
+                        index += 1
+                else:
+                    data[f"{field.name}"].append(0)
+                    data[f"Комментарий {index}"].append('')
                     index += 1
-            else:
-                data[f"{field.name}"].append(0)
-                data[f"Комментарий {index}"].append('')
-                index += 1
 
     df = pd.DataFrame(data)
 
@@ -189,6 +190,46 @@ def filling_questionnaire(request, _id):
 
     messages.error(request, f'Не определён метод запроса')
     return redirect('filling_questionnaire', _id)
+
+
+def result_questionnaire(request, _id):
+    form = Form.objects.get(id=_id)
+    file_name = f"Отчет по {str(form.name)}.xlsx"
+    save_report_for_user(form, request.user, file_name)
+    with open('static/' + file_name, 'rb') as fh:
+        content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        response = HttpResponse(fh.read(),
+                                content_type=content_type)
+        response['Content-Disposition'] = "inline; filename=" + translit(file_name,
+                                                                         language_code='ru',
+                                                                         reversed=True)
+    return response
+
+
+def save_report_for_user(form: Form, user: User, file_name: str) -> None:
+    data = {
+        "Критерии": [],
+        "Ответы": [],
+        "Комментарии": []
+    }
+
+    fields = Field.objects.filter(form_id=form.id).all()
+    for field in fields:
+        user_value = Value.objects.filter(field_id=field.id, user_id=user.id).first()
+        data['Критерии'].append(field.name)
+        if user_value is None:
+            data['Ответы'].append("Ответа нет")
+            data['Комментарии'].append('')
+        else:
+            data['Ответы'].append('0' if user_value.value is None else user_value.value)
+            data['Комментарии'].append('' if user_value.comment is None else user_value.comment)
+
+    df = pd.DataFrame(data)
+
+    if '.' in file_name:
+        df.to_excel(f"static/{file_name}", index=False)
+    else:
+        df.to_excel(f"static/{file_name}.xlsx", index=False)
 
 
 @login_required(login_url='login_page')

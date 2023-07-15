@@ -58,7 +58,13 @@ def login_page(request):
         else:
             request.session.set_expiry(None)
 
-        login(request, user_login)
+        # TODO: LDAP is_active проверка
+        if user_login.is_active:
+            login(request, user_login)
+        else:
+            messages.error(request, 'У вас не активная учётная запись')
+            return redirect('login_page')
+
         messages.success(request, 'Добро пожаловать!')
         return redirect('login_page')
 
